@@ -13,6 +13,6 @@ import com.betacom.veh.models.Veicolo;
 public interface IVeicoloRepository extends JpaRepository<Veicolo, Integer>{
 
 	@Query("SELECT v FROM Veicolo v WHERE v.tipoVeicolo = :tipo")
-	List<Veicolo> trovaPerCategoria(@Param("tipo") String tipo);
+	List<Veicolo> findByCategoria(@Param("tipo") String tipo);
 
 }
