@@ -1,6 +1,6 @@
 package com.betacom.veh.controllers;
 
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.input.ValidationGroups;
-import com.betacom.veh.dto.output.ResponseDTO;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,16 +28,8 @@ public class AutomobileController {
 	private final IAutomobileService carService;
 	
 	@GetMapping("/list")
-	public ResponseEntity<Object> list(){
-		Object r = new Object();
-		HttpStatus status = HttpStatus.OK;
-		try {
-			r = carService.list();
-		} catch (Exception e) {
-			r=e.getMessage();
-			status=HttpStatus.BAD_REQUEST;
-		}
-		return ResponseEntity.status(status).body(r);
+	public ResponseEntity<Object> list() throws Exception{
+		return ResponseEntity.ok(carService.list());
 	}
 	
 	@GetMapping("getById")
@@ -47,28 +38,17 @@ public class AutomobileController {
 	}
 	
 	@PostMapping("create")
-	public ResponseEntity<ResponseDTO> create(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
-		carService.create(req);
-		return ResponseEntity.ok(ResponseDTO.builder().msg("created...").build());
+	public ResponseEntity<Object> create(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
+		return ResponseEntity.ok(carService.create(req));
 	}
 	
 	@PatchMapping("update")
-	public ResponseEntity<ResponseDTO> update(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
-		carService.update(req);
-		return ResponseEntity.ok(ResponseDTO.builder().msg("updated...").build());
+	public ResponseEntity<Object> update(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
+		return ResponseEntity.ok(carService.update(req));
 	}
 	
 	@DeleteMapping("delete/{id}")
-	public ResponseEntity<ResponseDTO> delete(@PathVariable (required = true) Integer id) {
-		ResponseDTO r = new ResponseDTO();
-		HttpStatus status = HttpStatus.OK;
-		try {
-			carService.delete(id);
-			r.setMsg("deleted...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			status = HttpStatus.BAD_REQUEST;
-		}
-		return ResponseEntity.status(status).body(r);
+	public ResponseEntity<Object> delete(@PathVariable (required = true) Integer id) throws Exception{
+		return ResponseEntity.ok(carService.delete(id));
 	}
 }
