@@ -43,7 +43,7 @@ public class AutomobileController {
 	}
 	
 	@PatchMapping("update")
-	public ResponseEntity<Object> update(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
+	public ResponseEntity<Object> update(@RequestBody (required = true) @Validated(ValidationGroups.Update.class) AutomobileRequest req) throws Exception{
 		return ResponseEntity.ok(carService.update(req));
 	}
 	
