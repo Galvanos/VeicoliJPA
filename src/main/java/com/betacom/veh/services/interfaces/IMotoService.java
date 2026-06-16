@@ -6,7 +6,7 @@ import com.betacom.veh.dto.input.MotoRequest;
 import com.betacom.veh.dto.output.MotoDTO;
 
 public interface IMotoService {
-	final String TIPO_VEICOLO = "moto";
+	public static final String TIPO_VEICOLO = "MOTO";
 	void create(MotoRequest req) throws Exception;
 	void update(MotoRequest req) throws Exception;
 	void delete(Integer id) throws Exception;

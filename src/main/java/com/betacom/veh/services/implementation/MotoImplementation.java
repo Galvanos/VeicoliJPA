@@ -23,46 +23,33 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MotoImplementation implements IMotoService{
 	private final IMotoRepository repMoto;
-	private final VeicoloRequest requestVeicolo;
-	final String TIPO_VEICOLO = "moto";
 
 	@Override
 	@Transactional
 	public void create(MotoRequest req) throws Exception {
 		log.debug("create moto :{}", req);
-		if (repMoto.existsByTarga(req.getTarga().trim().toUpperCase()))
+		
+		String targa = req.getTarga().trim().toUpperCase();
+		req.setTarga(targa);
+		
+		if (repMoto.existsByTarga(targa))
 			throw new AcademyException("Eccezione targa moto esiste già");
+		
 		Moto moto = new Moto();
-
-		moto.setTarga(Optional.ofNullable(req.getTarga().trim().toUpperCase())
-				.orElseThrow(() -> new AcademyException("Eccezione targa moto")));
-
-		moto.setCc(Optional.ofNullable(req.getCc())
-				.orElseThrow(() -> new AcademyException("Eccezione cc moto")));
 		
-		if (req.getId() == null) throw new AcademyException("Eccezione id moto");
-		moto.setId(req.getId());
+		moto.setId(null);
+		moto.setTarga(targa);
+		moto.setCc(req.getCc());	
 		
-		if (req.getNumeroRuote() == null) throw new AcademyException("Eccezione numero ruote moto");
 		moto.setNumeroRuote(req.getNumeroRuote());
-		
-		moto.setTipoAlimentazione(Optional.ofNullable(req.getTipoAlimentazione().trim().toUpperCase())
-				.orElseThrow(() -> new AcademyException("Eccezione tipo alimentazione moto")));
-
-		moto.setCategoria(Optional.ofNullable(req.getCategoria())
-				.orElseThrow(() -> new AcademyException("Eccezione categoria moto")));
-		
-		moto.setColore(Optional.ofNullable(req.getColore().trim().toUpperCase())
-				.orElseThrow(() -> new AcademyException("Eccezione colore moto")));
-
-		moto.setMarca(Optional.ofNullable(req.getMarca())
-				.orElseThrow(() -> new AcademyException("Eccezione marca moto")));
-
-		if (req.getAnnoProduzione() == null) throw new AcademyException("Eccezione anno produzione moto");
+		moto.setTipoAlimentazione(
+				req.getTipoAlimentazione().trim().toUpperCase());
+		moto.setCategoria(req.getCategoria());
+		moto.setColore(req.getColore().trim().toUpperCase());
+		moto.setMarca(req.getMarca());
 		moto.setAnnoProduzione(req.getAnnoProduzione());
-		
-		moto.setModello(Optional.ofNullable(req.getModello())
-				.orElseThrow(() -> new AcademyException("Eccezione modello moto")));
+		moto.setModello(req.getModello());
+		moto.setTipoVeicolo(TIPO_VEICOLO);
 
 		repMoto.save(moto);
 	}
@@ -87,7 +74,7 @@ public class MotoImplementation implements IMotoService{
 	@Transactional
 	public void update(MotoRequest req) throws Exception {
 		log.debug("update moto :{}", req);
-		Moto moto = repMoto.findById(requestVeicolo.getId())
+		Moto moto = repMoto.findById(req.getId())
 				.orElseThrow(() -> new AcademyException("attiv.ntfnd"));
 		
 		if (req.getTarga() != null) {
