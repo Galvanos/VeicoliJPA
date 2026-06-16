@@ -4,21 +4,16 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder
 @ToString
-public class MotoRequest {
-	private String targa;
-	private Integer cc;
-	
-	private Integer id;
-    private Integer numeroRuote;
-    private String tipoAlimentazione;
-    private String categoria;
-    private String colore;
-    private String marca;
-    private Integer annoProduzione;
-    private String modello;
+public class MotoRequest extends VeicoloRequest{
+	@NotNull(groups = ValidationGroups.Create.class, message = "targa non fornita")
+ 	private String targa;
+	@NotNull(groups = ValidationGroups.Create.class, message = "cilindrata non fornita")
+    private Integer cc;
 
 }

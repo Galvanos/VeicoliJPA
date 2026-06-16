@@ -10,6 +10,7 @@ import com.betacom.veh.dto.input.MotoRequest;
 import com.betacom.veh.dto.input.VeicoloRequest;
 import com.betacom.veh.dto.mapping.MotoMap;
 import com.betacom.veh.dto.output.MotoDTO;
+import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Moto;
 import com.betacom.veh.repositories.IMotoRepository;
 import com.betacom.veh.services.interfaces.IMotoService;
@@ -30,38 +31,38 @@ public class MotoImplementation implements IMotoService{
 	public void create(MotoRequest req) throws Exception {
 		log.debug("create moto :{}", req);
 		if (repMoto.existsByTarga(req.getTarga().trim().toUpperCase()))
-			throw new Exception("Eccezione targa moto esiste già");
+			throw new AcademyException("Eccezione targa moto esiste già");
 		Moto moto = new Moto();
 
 		moto.setTarga(Optional.ofNullable(req.getTarga().trim().toUpperCase())
-				.orElseThrow(() -> new Exception("Eccezione targa moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione targa moto")));
 
 		moto.setCc(Optional.ofNullable(req.getCc())
-				.orElseThrow(() -> new Exception("Eccezione cc moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione cc moto")));
 		
-		if (req.getId() == null) throw new Exception("Eccezione id moto");
+		if (req.getId() == null) throw new AcademyException("Eccezione id moto");
 		moto.setId(req.getId());
 		
-		if (req.getNumeroRuote() == null) throw new Exception("Eccezione numero ruote moto");
+		if (req.getNumeroRuote() == null) throw new AcademyException("Eccezione numero ruote moto");
 		moto.setNumeroRuote(req.getNumeroRuote());
 		
 		moto.setTipoAlimentazione(Optional.ofNullable(req.getTipoAlimentazione().trim().toUpperCase())
-				.orElseThrow(() -> new Exception("Eccezione tipo alimentazione moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione tipo alimentazione moto")));
 
 		moto.setCategoria(Optional.ofNullable(req.getCategoria())
-				.orElseThrow(() -> new Exception("Eccezione categoria moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione categoria moto")));
 		
 		moto.setColore(Optional.ofNullable(req.getColore().trim().toUpperCase())
-				.orElseThrow(() -> new Exception("Eccezione colore moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione colore moto")));
 
 		moto.setMarca(Optional.ofNullable(req.getMarca())
-				.orElseThrow(() -> new Exception("Eccezione marca moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione marca moto")));
 
-		if (req.getAnnoProduzione() == null) throw new Exception("Eccezione anno produzione moto");
+		if (req.getAnnoProduzione() == null) throw new AcademyException("Eccezione anno produzione moto");
 		moto.setAnnoProduzione(req.getAnnoProduzione());
 		
 		moto.setModello(Optional.ofNullable(req.getModello())
-				.orElseThrow(() -> new Exception("Eccezione modello moto")));
+				.orElseThrow(() -> new AcademyException("Eccezione modello moto")));
 
 		repMoto.save(moto);
 	}
@@ -69,6 +70,7 @@ public class MotoImplementation implements IMotoService{
 	@Override
 	@Transactional
 	public List<MotoDTO> list() throws Exception {
+		log.debug("list moto :{}");
 		List<Moto> lMoto = repMoto.findAll();
 		return MotoMap.buildMotoDTOList(lMoto);
 	}
@@ -78,7 +80,7 @@ public class MotoImplementation implements IMotoService{
 	public MotoDTO getById(Integer id) throws Exception {
 		log.debug("getById moto per id:{}", id);
 		Moto moto = repMoto.findById(id)
-				.orElseThrow(() -> new Exception("Id moto non trovato"));
+				.orElseThrow(() -> new AcademyException("Id moto non trovato"));
 		return MotoMap.buildMotoDTO(moto);
 	}
 	@Override
@@ -86,11 +88,11 @@ public class MotoImplementation implements IMotoService{
 	public void update(MotoRequest req) throws Exception {
 		log.debug("update moto :{}", req);
 		Moto moto = repMoto.findById(requestVeicolo.getId())
-				.orElseThrow(() -> new Exception("attiv.ntfnd"));
+				.orElseThrow(() -> new AcademyException("attiv.ntfnd"));
 		
 		if (req.getTarga() != null) {
 			if (repMoto.existsByTarga(req.getTarga().trim().toUpperCase()))
-				throw new Exception("Targa moto già presente");
+				throw new AcademyException("Targa moto già presente");
 			moto.setTarga(req.getTarga().translateEscapes().toUpperCase());
 		}
 		
@@ -106,7 +108,7 @@ public class MotoImplementation implements IMotoService{
 	public void delete(Integer id) throws Exception {
 		log.debug("delete moto con id:{}", id);
 		Moto moto = repMoto.findById(id)
-				.orElseThrow(() -> new Exception("Id moto non trovato"));
+				.orElseThrow(() -> new AcademyException("Id moto non trovato"));
 		repMoto.delete(moto);
 	}
 }
