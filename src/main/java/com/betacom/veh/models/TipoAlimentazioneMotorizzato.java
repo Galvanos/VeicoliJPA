@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "tipi_alimentazione_motorizzati")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
-public class TipiAlimentazioneMotorizzati {
+public class TipoAlimentazioneMotorizzato {
 
     @Id
     private String tipo;

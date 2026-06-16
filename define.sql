@@ -16,6 +16,12 @@
         primary key (id)
     );
 
+    create table categorie_automobili (
+        segmento char(1),
+        categoria varchar(255) not null,
+        primary key (categoria)
+    );
+
     create table moto (
         cilindrata integer,
         id integer not null,
