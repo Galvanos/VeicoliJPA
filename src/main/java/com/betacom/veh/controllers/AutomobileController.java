@@ -2,6 +2,7 @@ package com.betacom.veh.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.betacom.veh.dto.input.AutomobileRequest;
+import com.betacom.veh.dto.input.ValidationGroups;
 import com.betacom.veh.dto.output.ResponseDTO;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
@@ -45,13 +47,13 @@ public class AutomobileController {
 	}
 	
 	@PostMapping("create")
-	public ResponseEntity<ResponseDTO> create(@RequestBody (required = true)  AutomobileRequest req) throws Exception{
+	public ResponseEntity<ResponseDTO> create(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
 		carService.create(req);
 		return ResponseEntity.ok(ResponseDTO.builder().msg("created...").build());
 	}
 	
 	@PatchMapping("update")
-	public ResponseEntity<ResponseDTO> update(@RequestBody (required = true) AutomobileRequest req) throws Exception{
+	public ResponseEntity<ResponseDTO> update(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
 		carService.update(req);
 		return ResponseEntity.ok(ResponseDTO.builder().msg("updated...").build());
 	}

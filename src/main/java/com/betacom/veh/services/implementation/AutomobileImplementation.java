@@ -27,6 +27,8 @@ public class AutomobileImplementation implements IAutomobileService{
 		if(carRepo.existsByTarga(req.getTarga()))
 			throw new Exception("Targa giá presente nel db;");
 		car.setTarga(req.getTarga());
+		if(req.getNumeroRuote() < 1 || req.getNumeroRuote() > 99)
+			throw new Exception("Numero di ruote non valido;");
 		car.setNumeroRuote(req.getNumeroRuote());
 		car.setAnnoProduzione(req.getAnnoProduzione());
 		car.setCategoria(req.getCategoria());
