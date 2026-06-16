@@ -16,7 +16,6 @@ public abstract class VeicoloRequest {
 
 	@NotNull(groups = ValidationGroups.Update.class, message = "id veicolo non fornito")
 	private Integer id;
-    private String tipoVeicolo;
     @NotNull(groups = ValidationGroups.Create.class, message = "numero ruote non fornito")
     private Integer numeroRuote;
     @NotNull(groups = ValidationGroups.Create.class, message = "tipo alimentazione non fornito")
