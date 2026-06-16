@@ -1,5 +1,6 @@
 package com.betacom.veh.services.implementation;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,15 +31,19 @@ public class AutomobileImplementation implements IAutomobileService{
 		if(req.getNumeroRuote() < 1 || req.getNumeroRuote() > 99)
 			throw new Exception("Numero di ruote non valido;");
 		car.setNumeroRuote(req.getNumeroRuote());
+		if(req.getAnnoProduzione() > LocalDate.now().getYear() || LocalDate.now().getYear() - req.getAnnoProduzione() > 20)
+			throw new Exception("Anno di produzione non valido o troppo poco recente;");
 		car.setAnnoProduzione(req.getAnnoProduzione());
-		car.setCategoria(req.getCategoria());
+		car.setCategoria(req.getCategoria()); // implementare check da database
 		car.setCc(req.getCc());
 		car.setColore(req.getColore());
 		car.setMarca(req.getMarca());
+		if(req.getNumeroRuote() < 1 || req.getNumeroRuote() > 10)
+			throw new Exception("Numero di porte non valido;");
 		car.setNumeroPorte(req.getNumeroPorte());
-		car.setTipoAlimentazione(req.getTipoAlimentazione());
+		car.setTipoAlimentazione(req.getTipoAlimentazione()); // implementare check da database
 		car.setModello(req.getModello());
-		car.setTipoVeicolo("Automobile");
+		car.setTipoVeicolo("AUTOMOBILE");
 		
 		AutomobileDTO carDto = AutomobileMap.buildAutomobileDTO(carRepo.save(car));
 		return carDto;
