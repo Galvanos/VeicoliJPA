@@ -15,8 +15,8 @@ import lombok.Setter;
 public class CategorieAutomobili {
 
 	@Id
-	private String Categoria;
+	private String categoria;
 	
 	@Column(name="segmento")
-	private Character Segmento;
+	private Character segmento;
 }
