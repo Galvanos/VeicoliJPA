@@ -1,6 +1,6 @@
 package com.betacom.veh.dto.output;
 
-import com.betacom.veh.dto.input.ValidationGroups;
+import com.betacom.veh.dto.validation.ValidationGroups;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -29,6 +29,11 @@
         primary key (id)
     );
 
+    create table tipi_alimentazione_motorizzati (
+        tipo varchar(255) not null,
+        primary key (tipo)
+    );
+
     create table tipo_freno (
         tipo varchar(255) not null,
         primary key (tipo)
@@ -37,11 +42,6 @@
     create table tipo_sospensione (
         tipo_sospensione varchar(255) not null,
         primary key (tipo_sospensione)
-	);
-	
-    create table tipi_alimentazione_motorizzati (
-        tipo varchar(255) not null,
-        primary key (tipo)
     );
 
     create table veicolo (
