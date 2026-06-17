@@ -2,6 +2,7 @@ package com.betacom.veh.controllers;
 
 import java.util.List;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.betacom.veh.dto.input.MotoRequest;
-import com.betacom.veh.dto.input.ValidationGroups;
+import com.betacom.veh.dto.validation.ValidationGroups;
 import com.betacom.veh.dto.output.MotoDTO;
 import com.betacom.veh.dto.output.ResponseDTO;
 import com.betacom.veh.services.interfaces.IMotoService;
