@@ -11,6 +11,7 @@ import com.betacom.veh.dto.mapping.AutomobileMap;
 import com.betacom.veh.dto.output.AutomobileDTO;
 import com.betacom.veh.models.Automobile;
 import com.betacom.veh.repositories.IAutomobileRepository;
+import com.betacom.veh.repositories.ICategorieAutomobiliRepository;
 import com.betacom.veh.repositories.ITipiAlimentazioneMotorizzati;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
@@ -19,9 +20,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AutomobileImplementation implements IAutomobileService{
+	private final ICategorieAutomobiliRepository catRepo;
 	private final ITipiAlimentazioneMotorizzati typeRepo;
 	private final IAutomobileRepository carRepo;
-	private final String patternTargaAuto = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
+	private final static String PATTERN_TARGA_AUTO = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
 
 	@Override
 	public AutomobileDTO create(AutomobileRequest req) throws Exception {
@@ -89,7 +91,7 @@ public class AutomobileImplementation implements IAutomobileService{
 	private void validateRequestValues(AutomobileRequest req) throws Exception{
 		
 		Optional.ofNullable(req.getTarga()).ifPresent(targa -> {
-			if(carRepo.existsByTarga(targa) || !targa.matches(patternTargaAuto))
+			if(carRepo.existsByTarga(targa) || !targa.matches(PATTERN_TARGA_AUTO))
 				throw new RuntimeException("Targa non valida o giá presente nel db.");
 		});		
 		Optional.ofNullable(req.getNumeroRuote()).ifPresent(numeroRuote -> {
@@ -97,13 +99,17 @@ public class AutomobileImplementation implements IAutomobileService{
 				throw new RuntimeException("Numero ruote non valido.");
 		});
 		Optional.ofNullable(req.getAnnoProduzione()).ifPresent(annoProduzione -> {
-			if(req.getAnnoProduzione() > LocalDate.now().getYear() || LocalDate.now().getYear() - req.getAnnoProduzione() > 20)
+			if(annoProduzione > LocalDate.now().getYear() || LocalDate.now().getYear() - annoProduzione > 20)
 				throw new RuntimeException("Anno produzione non valido o troppo vecchio.");
 		}); 
 		Optional.ofNullable(req.getNumeroPorte()).ifPresent(numeroPorte -> {
 			if(numeroPorte < 1 || numeroPorte > 10)
 				throw new RuntimeException("Numero di porte non valido.");
-		});			
+		});
+		Optional.ofNullable(req.getCategoria()).ifPresent(categoria -> {
+			if(!catRepo.existsByCategoria(categoria.toLowerCase()))
+				throw new RuntimeException("Categoria non valida.");
+		});
 		Optional.ofNullable(req.getTipoAlimentazione()).ifPresent(tipoAlimentazione -> {
 			if(!typeRepo.existsByTipo(tipoAlimentazione.toUpperCase()))
 				throw new RuntimeException("Tipo di alimentazione non valido.");

@@ -13,8 +13,8 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "bici")
 public class Bici extends Veicolo {
-	@Column(name = "numero_marce")
-    private Integer numeroMarce;
+	@Column(name = "numero_rapporti")
+    private Integer numeroRapporti;
 
     @Column(name = "tipo_freno", length = 30)
     private String tipoFreno;
