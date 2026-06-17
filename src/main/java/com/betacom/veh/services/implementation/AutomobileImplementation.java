@@ -40,7 +40,7 @@ public class AutomobileImplementation implements IAutomobileService{
 		car.setColore(req.getColore());
 		car.setMarca(req.getMarca());
 		car.setNumeroPorte(req.getNumeroPorte());
-		car.setTipoAlimentazione(req.getTipoAlimentazione().toUpperCase());
+		car.setTipoAlimentazione(req.getTipoAlimentazione());
 		car.setModello(req.getModello());
 		car.setTipoVeicolo("AUTOMOBILE");
 		
@@ -108,12 +108,14 @@ public class AutomobileImplementation implements IAutomobileService{
 				throw new RuntimeException("Numero di porte non valido.");
 		});
 		Optional.ofNullable(req.getCategoria()).ifPresent(categoria -> {
-			if(!catRepo.existsByCategoria(categoria.toLowerCase()))
+			if(!catRepo.existsByCategoria(categoria.toUpperCase()))
 				throw new RuntimeException("Categoria non valida.");
+			else req.setCategoria(categoria.toUpperCase());
 		});
 		Optional.ofNullable(req.getTipoAlimentazione()).ifPresent(tipoAlimentazione -> {
 			if(!typeRepo.existsByTipo(tipoAlimentazione.toUpperCase()))
 				throw new RuntimeException("Tipo di alimentazione non valido.");
+			else req.setTipoAlimentazione(tipoAlimentazione.toUpperCase());
 		});
 			
 
