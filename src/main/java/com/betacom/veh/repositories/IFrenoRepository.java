@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.betacom.veh.models.TipoFreno;
 
 public interface IFrenoRepository extends JpaRepository<TipoFreno, String>{
-	Boolean existsByTipoFreno(String tipoFreno);
+	Boolean existsByTipo(String tipoFreno);
 }

@@ -29,7 +29,7 @@ public class BiciImplementation implements IBiciService{
 		if(req.getNumeroRapporti() <= 1 || req.getNumeroRapporti() >= 33)
 			throw new AcademyException("Numero rapporti non valido: " + req.getNumeroRapporti());
 		bici.setNumeroRapporti(req.getNumeroRapporti());
-		if (!frenR.existsByTipoFreno(req.getTipoFreno().trim().toUpperCase()))
+		if (!frenR.existsByTipo(req.getTipoFreno().trim().toUpperCase()))
 			throw new AcademyException("Tipo di freno non trovato");
 		bici.setTipoFreno(req.getTipoFreno().trim().toUpperCase());
 		if (!sospR.existsByTipoSospensione(req.getTipoSospensione().trim().toUpperCase()))
