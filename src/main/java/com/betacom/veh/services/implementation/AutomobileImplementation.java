@@ -31,10 +31,11 @@ public class AutomobileImplementation implements IAutomobileService{
 		
 		Automobile car = new Automobile();
 
+		car.setId(null);		
 		car.setTarga(req.getTarga().toUpperCase());
 		car.setNumeroRuote(req.getNumeroRuote());
 		car.setAnnoProduzione(req.getAnnoProduzione());
-		car.setCategoria(req.getCategoria()); // implementare check da database
+		car.setCategoria(req.getCategoria());
 		car.setCc(req.getCc());
 		car.setColore(req.getColore());
 		car.setMarca(req.getMarca());
