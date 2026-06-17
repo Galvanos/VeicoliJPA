@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.betacom.veh.dto.mapping.VeicoloMap;
 import com.betacom.veh.dto.output.VeicoloDTO;
+import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Veicolo;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class VeicoloImplementation implements IVeicoloService{
 	@Override
 	public VeicoloDTO findById(Integer id) {
 		 Veicolo veicolo = veicoloRepository.findById(id)
-		            .orElseThrow(() -> new RuntimeException("Veicolo non trovato"));
+		            .orElseThrow(() -> new AcademyException("Veicolo non trovato"));
 
 		    return VeicoloMap.buildVeicoloDTO(veicolo);
 	}

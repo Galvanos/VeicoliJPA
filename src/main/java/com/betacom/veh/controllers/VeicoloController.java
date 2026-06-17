@@ -24,7 +24,7 @@ public class VeicoloController {
 	
 	@GetMapping("/list")
 	public ResponseEntity<List<VeicoloDTO>> list() throws Exception{
-		return ResponseEntity.ok(veicoloService.findAll());
+		return ResponseEntity.ok(veicoloService.findAll()); 
 	}
 	
 	@GetMapping("getById")

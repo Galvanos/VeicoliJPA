@@ -21,7 +21,7 @@ public class VeicoloMap {
 	        }
 
 	        if (veicolo instanceof Bici bici) {
-	            return BiciMap.buildBiciDTO(bici);
+	            return BiciMap.buildBiciDTO(bici); 
 	        }
 
 	        throw new IllegalArgumentException("Tipo di veicolo non supportato " + veicolo.getClass().getSimpleName());
