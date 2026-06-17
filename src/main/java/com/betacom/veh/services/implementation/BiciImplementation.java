@@ -31,7 +31,7 @@ public class BiciImplementation implements IBiciService{
 		if (!frenR.existsByTipo(req.getTipoFreno().trim().toUpperCase()))
 			throw new AcademyException("Tipo di freno non trovato");
 		bici.setTipoFreno(req.getTipoFreno().trim().toUpperCase());
-		if (!sospR.existsByTipo(req.getTipoSospensione().trim().toUpperCase()))
+		if (!sospR.existsByTipoSospensione(req.getTipoSospensione().trim().toUpperCase()))
 			throw new AcademyException("Tipo di sospensione non trovato");
 		bici.setTipoSospensione(req.getTipoSospensione().trim().toUpperCase());
 		bici.setPieghevole(req.getPieghevole());
