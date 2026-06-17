@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.betacom.veh.dto.input.BiciRequest;
+import com.betacom.veh.dto.mapping.BiciMap;
 import com.betacom.veh.dto.output.BiciDTO;
 import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Bici;
@@ -35,13 +36,17 @@ public class BiciImplementation implements IBiciService{
 			throw new AcademyException("Tipo di sospensione non trovato");
 		bici.setTipoSospensione(req.getTipoSospensione().trim().toUpperCase());
 		bici.setPieghevole(req.getPieghevole());
+		bici.setTipoAlimentazione(Alimentazione(req.getTipoAlimentazione()));
 		
-		return null;
+		BiciDTO biciDto = BiciMap.buildBiciDTO(biciR.save(bici));
+		
+		return biciDto;
 	}
 
 	@Override
 	public BiciDTO update(BiciRequest req) throws Exception {
-		// TODO Auto-generated method stub
+		Bici bici = biciR.findById(req.getId()).orElseThrow(() -> new AcademyException("Bici non trovata"));
+		
 		return null;
 	}
 
@@ -61,6 +66,17 @@ public class BiciImplementation implements IBiciService{
 	public BiciDTO getById(Integer id) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private String Alimentazione(String alimentazione) {
+		
+		if (alimentazione.trim().toUpperCase().matches("\\b(ELETTRICO|ELETTRICA)\\b")) {
+			return alimentazione = "ELETTRICA";
+		}else if (alimentazione.trim().toUpperCase().matches("\\b(MUSCOLARE|MANUALE)\\b")) {
+			return alimentazione = "MANUALE";
+		}else {
+			throw new AcademyException("Tipo alimentazione non valido.");
+		}
 	}
 
 }
