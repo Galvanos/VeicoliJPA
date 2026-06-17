@@ -16,4 +16,8 @@
 
     drop table if exists moto cascade;
 
+    drop table if exists tipo_freno cascade;
+
+    drop table if exists tipo_sospensione cascade;
+
     drop table if exists veicolo cascade;
