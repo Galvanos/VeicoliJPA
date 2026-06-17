@@ -16,5 +16,5 @@ import lombok.Setter;
 @Table(name="tipo_freno")
 public class TipoFreno {
 	@Id
-	private String tipo;
+	private String tipoFreno;
 }
