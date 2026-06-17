@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.betacom.veh.dto.input.AutomobileRequest;
-import com.betacom.veh.dto.input.ValidationGroups;
+import com.betacom.veh.dto.validation.ValidationGroups;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
 import lombok.RequiredArgsConstructor;

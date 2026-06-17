@@ -1,4 +1,4 @@
-package com.betacom.veh.dto.input;
+package com.betacom.veh.dto.validation;
 
 public interface ValidationGroups {
  interface Create {}

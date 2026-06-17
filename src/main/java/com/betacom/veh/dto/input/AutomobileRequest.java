@@ -1,5 +1,7 @@
 package com.betacom.veh.dto.input;
 
+import com.betacom.veh.dto.validation.ValidationGroups;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

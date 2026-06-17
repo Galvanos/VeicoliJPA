@@ -1,4 +1,6 @@
-package com.betacom.veh.controllers;
+package com.betacom.veh.controllers.exceptionhandler;
+
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,12 @@ import com.betacom.veh.dto.output.ResponseDTO;
 public class ExceptionManager {
 
 	/**
+	 * Separatore tra i vari messaggi errore di validazione
+	 * @see #handleValidationException(MethodArgumentNotValidException)
+	 */
+	public static final String VALIDATION_MESSAGES_SEPARATOR = " ; ";
+
+	/**
 	 * Gestore delle eccezioni generiche
 	 * @param e l'eccezione intercettata
 	 * @return un {@link ResponseEntity} con stato  {@link HttpStatus#BAD_REQUEST} con incapsulato un {@link ResponseDTO} 
@@ -28,21 +36,16 @@ public class ExceptionManager {
 	}
 	
 	/**
-	 * Gestore specifico dell'eccezione di validazione degli input, 
-	 * al momento viene mostrato il primo errore di validazione individuato
+	 * Gestore specifico dell'eccezione di validazione degli input, i vari messaggi sono separati da {@value #VALIDATION_MESSAGES_SEPARATOR}
 	 * @param e {@link MethodArgumentNotValidException} sollevata in caso di errori di validazione dell'input del rest controller
 	 * @return un {@link ResponseEntity} con stato  {@link HttpStatus#BAD_REQUEST} con incapsulato un {@link ResponseDTO} 
 	 * il cui campo {@link ResponseDTO#getMsg()} fornisce il messaggio di risposta
+	 * @see #VALIDATION_MESSAGES_SEPARATOR
 	 */
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ResponseDTO> handleValidationException(MethodArgumentNotValidException e) {
-		//si potrebbero anche mostrare tutti i messaggi, da valutare
-		String msg = e.getBindingResult()
+	public ResponseEntity<ResponseDTO> handleValidationException(MethodArgumentNotValidException e) {		String msg = e.getBindingResult()
                 .getFieldErrors()
-                .stream()
-                .findFirst()
-                .map(FieldError::getDefaultMessage)
-                .orElse("Errore di validazione");
+                .stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(VALIDATION_MESSAGES_SEPARATOR));
 
 	  return ResponseEntity.badRequest()
 				.body(ResponseDTO.builder()
