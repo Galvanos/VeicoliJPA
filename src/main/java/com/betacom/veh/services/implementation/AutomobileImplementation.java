@@ -23,7 +23,7 @@ public class AutomobileImplementation implements IAutomobileService{
 	private final ICategorieAutomobiliRepository catRepo;
 	private final ITipiAlimentazioneMotorizzati typeRepo;
 	private final IAutomobileRepository carRepo;
-	private final String patternTargaAuto = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
+	private final static String PATTERN_TARGA_AUTO = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
 
 	@Override
 	public AutomobileDTO create(AutomobileRequest req) throws Exception {
@@ -91,7 +91,7 @@ public class AutomobileImplementation implements IAutomobileService{
 	private void validateRequestValues(AutomobileRequest req) throws Exception{
 		
 		Optional.ofNullable(req.getTarga()).ifPresent(targa -> {
-			if(carRepo.existsByTarga(targa) || !targa.matches(patternTargaAuto))
+			if(carRepo.existsByTarga(targa) || !targa.matches(PATTERN_TARGA_AUTO))
 				throw new RuntimeException("Targa non valida o giá presente nel db.");
 		});		
 		Optional.ofNullable(req.getNumeroRuote()).ifPresent(numeroRuote -> {

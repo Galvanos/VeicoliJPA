@@ -10,7 +10,7 @@
     create table bici (
         id integer not null,
         is_pieghevole boolean,
-        numero_marce integer,
+        numero_rapporti integer,
         tipo_freno varchar(30),
         tipo_sospensione varchar(30),
         primary key (id)
@@ -29,6 +29,16 @@
         primary key (id)
     );
 
+    create table tipo_freno (
+        tipo varchar(255) not null,
+        primary key (tipo)
+    );
+
+    create table tipo_sospensione (
+        tipo_sospensione varchar(255) not null,
+        primary key (tipo_sospensione)
+	);
+	
     create table tipi_alimentazione_motorizzati (
         tipo varchar(255) not null,
         primary key (tipo)
