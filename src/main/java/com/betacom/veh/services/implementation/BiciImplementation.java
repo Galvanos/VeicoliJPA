@@ -7,9 +7,11 @@ import com.betacom.veh.dto.mapping.BiciMap;
 import com.betacom.veh.dto.output.BiciDTO;
 import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Bici;
+import com.betacom.veh.models.TipoAlimentazioneId;
 import com.betacom.veh.repositories.IBiciRepository;
 import com.betacom.veh.repositories.IFrenoRepository;
 import com.betacom.veh.repositories.ISospensioneRepository;
+import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 import com.betacom.veh.services.interfaces.IBiciService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ public class BiciImplementation implements IBiciService{
 	private final IBiciRepository biciR;
 	private final IFrenoRepository frenR;
 	private final ISospensioneRepository sospR;
+	private final ITipoAlimentazioneRepository typeRepo;
+	private final String tipoVeicolo = "BICICLETTA";
 	
 	@Override
 	public BiciDTO create(BiciRequest req) throws Exception {
@@ -71,13 +75,13 @@ public class BiciImplementation implements IBiciService{
 	
 	private String Alimentazione(String alimentazione) {
 		
-		if (alimentazione.trim().toUpperCase().matches("\\b(ELETTRICO|ELETTRICA)\\b")) {
-			return alimentazione = "ELETTRICA";
-		}else if (alimentazione.trim().toUpperCase().matches("\\b(MUSCOLARE|MANUALE)\\b")) {
-			return alimentazione = "MANUALE";
-		}else {
+		if(!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder()
+				.tipoVeicolo(tipoVeicolo)
+				.tipoAlimentazione(alimentazione.toUpperCase())
+				.build()))
+			return alimentazione.toUpperCase();
+		else
 			throw new AcademyException("Tipo alimentazione non valido.");
-		}
 	}
 
 }

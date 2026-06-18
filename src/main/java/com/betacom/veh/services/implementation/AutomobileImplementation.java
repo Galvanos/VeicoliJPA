@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.mapping.AutomobileMap;
 import com.betacom.veh.dto.output.AutomobileDTO;
+import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Automobile;
 import com.betacom.veh.models.CategoriaId;
 import com.betacom.veh.models.TipoAlimentazioneId;
@@ -96,28 +97,28 @@ public class AutomobileImplementation implements IAutomobileService{
 		
 		Optional.ofNullable(req.getTarga()).ifPresent(targa -> {
 			if(carRepo.existsByTarga(targa) || !targa.matches(PATTERN_TARGA_AUTO))
-				throw new RuntimeException("Targa non valida o giá presente nel db.");
+				throw new AcademyException("Targa non valida o giá presente nel db.");
 		});		
 		Optional.ofNullable(req.getNumeroRuote()).ifPresent(numeroRuote -> {
 			if(numeroRuote < 1 || numeroRuote > 99)
-				throw new RuntimeException("Numero ruote non valido.");
+				throw new AcademyException("Numero ruote non valido.");
 		});
 		Optional.ofNullable(req.getAnnoProduzione()).ifPresent(annoProduzione -> {
 			if(annoProduzione > LocalDate.now().getYear() || LocalDate.now().getYear() - annoProduzione > 20)
-				throw new RuntimeException("Anno produzione non valido o troppo vecchio.");
+				throw new AcademyException("Anno produzione non valido o troppo vecchio.");
 		}); 
 		Optional.ofNullable(req.getNumeroPorte()).ifPresent(numeroPorte -> {
 			if(numeroPorte < 1 || numeroPorte > 10)
-				throw new RuntimeException("Numero di porte non valido.");
+				throw new AcademyException("Numero di porte non valido.");
 		});
 		Optional.ofNullable(req.getCategoria()).ifPresent(categoria -> {
 			if(!catRepo.existsByCategoriaId(CategoriaId.builder().tipoVeicolo(tipoVeicolo).categoria(categoria.toUpperCase()).build()))
-				throw new RuntimeException("Categoria non valida.");
+				throw new AcademyException("Categoria non valida.");
 			else req.setCategoria(categoria.toUpperCase());
 		});
 		Optional.ofNullable(req.getTipoAlimentazione()).ifPresent(tipoAlimentazione -> {
 			if(!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder().tipoVeicolo(tipoVeicolo).tipoAlimentazione(tipoAlimentazione.toUpperCase()).build()))
-				throw new RuntimeException("Tipo di alimentazione non valido.");
+				throw new AcademyException("Tipo di alimentazione non valido.");
 			else req.setTipoAlimentazione(tipoAlimentazione.toUpperCase());
 		});
 			
