@@ -41,8 +41,8 @@
     );
 
     create table tipo_freno (
-        tipo varchar(255) not null,
-        primary key (tipo)
+        tipo_freno varchar(255) not null,
+        primary key (tipo_freno)
     );
 
     create table tipo_sospensione (
