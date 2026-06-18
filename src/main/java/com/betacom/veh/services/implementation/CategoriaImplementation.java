@@ -2,6 +2,8 @@ package com.betacom.veh.services.implementation;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.betacom.veh.dto.input.CategoriaRequest;
 import com.betacom.veh.dto.output.CategoriaDTO;
 import com.betacom.veh.exceptions.AcademyException;
@@ -14,6 +16,7 @@ import com.betacom.veh.services.interfaces.ICategoriaService;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class CategoriaImplementation implements ICategoriaService{
 	private final ICategoriaRepository catRepo;

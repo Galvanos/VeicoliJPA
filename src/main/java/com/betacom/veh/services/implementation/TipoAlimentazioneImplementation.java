@@ -2,6 +2,8 @@ package com.betacom.veh.services.implementation;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.betacom.veh.dto.input.TipoAlimentazioneRequest;
 import com.betacom.veh.dto.output.TipoAlimentazioneDTO;
 import com.betacom.veh.exceptions.AcademyException;
@@ -12,6 +14,7 @@ import com.betacom.veh.services.interfaces.ITipoAlimentazioneService;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class TipoAlimentazioneImplementation implements ITipoAlimentazioneService{
 	private final ITipoAlimentazioneRepository typeRepo;
@@ -35,7 +38,7 @@ public class TipoAlimentazioneImplementation implements ITipoAlimentazioneServic
 															.tipoVeicolo(tipoAlimentazioneRequest.getTipoVeicolo())
 															.tipoAlimentazione(tipoAlimentazioneRequest.getTipoAlimentazione())
 															.build()).orElseThrow(() -> new Exception("Tipo di alimentazione non trovato"));
-		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneDTO.buildTipoAlimentazioneDTO(tipoToDelete);
+		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneMap.buildTipoAlimentazioneDTO(tipoToDelete);
 		typeRepo.delete(tipoToDelete);
 		
 	}
