@@ -3,6 +3,8 @@ package com.betacom.veh.services.implementation;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.betacom.veh.dto.input.BiciRequest;
 import com.betacom.veh.dto.mapping.BiciMap;
 import com.betacom.veh.dto.output.BiciDTO;
@@ -13,8 +15,10 @@ import com.betacom.veh.repositories.IFrenoRepository;
 import com.betacom.veh.repositories.ISospensioneRepository;
 import com.betacom.veh.services.interfaces.IBiciService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class BiciImplementation implements IBiciService{
 
@@ -22,6 +26,7 @@ public class BiciImplementation implements IBiciService{
 	private final IFrenoRepository frenR;
 	private final ISospensioneRepository sospR;
 	
+	@Transactional
 	@Override
 	public BiciDTO create(BiciRequest req) throws Exception {
 		
@@ -43,31 +48,44 @@ public class BiciImplementation implements IBiciService{
 		return biciDto;
 	}
 
+	@Transactional
 	@Override
 	public BiciDTO update(BiciRequest req) throws Exception {
 		Bici bici = biciR.findById(req.getId()).orElseThrow(() -> new AcademyException("Bici non trovata"));
 		
+		Optional.ofNullable(req.getNumeroRapporti()).ifPresent(bici::setNumeroRapporti);
+		Optional.ofNullable(req.getTipoFreno()).ifPresent(bici::setTipoFreno);
+		Optional.ofNullable(req.getTipoSospensione()).ifPresent(bici::setTipoSospensione);
+		Optional.ofNullable(req.getPieghevole()).ifPresent(bici::setPieghevole);
 		
+		BiciDTO biciDto = BiciMap.buildBiciDTO(biciR.save(bici));
 		
-		return null;
+		return biciDto;
 	}
 
+	@Transactional
 	@Override
 	public BiciDTO delete(Integer id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		Bici bici = biciR.findById(id).orElseThrow(() -> new AcademyException("Bici non trovata"));
+		
+		biciR.delete(bici);
+		BiciDTO biciDto = BiciMap.buildBiciDTO(bici);
+		
+		return biciDto;
 	}
 
 	@Override
 	public List<BiciDTO> list() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Bici> listaBici = biciR.findAll();
+		return BiciMap.buildBiciDTOList(listaBici);
 	}
 
 	@Override
 	public BiciDTO getById(Integer id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Bici bici = biciR.findById(id).orElseThrow(() -> new AcademyException("Bici non trovata"));
+
+		return BiciMap.buildBiciDTO(bici);
 	}
 	
 	private String Alimentazione(String alimentazione) {
