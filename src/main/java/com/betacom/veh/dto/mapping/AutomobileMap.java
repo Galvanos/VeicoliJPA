@@ -21,7 +21,7 @@ public class AutomobileMap {
 				.numeroRuote(automobile.getNumeroRuote())
 				.targa(automobile.getTarga())
 				.tipoAlimentazione(automobile.getTipoAlimentazione())
-				.tipoVeicolo("Automobile")
+				.tipoVeicolo("AUTOMOBILE")
 				.build();
 		
 	}

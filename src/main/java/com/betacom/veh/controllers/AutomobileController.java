@@ -17,6 +17,7 @@ import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.validation.ValidationGroups;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,16 +38,19 @@ public class AutomobileController {
 		return ResponseEntity.ok(carService.getById(id));
 	}
 	
+	@Transactional
 	@PostMapping("create")
 	public ResponseEntity<Object> create(@RequestBody (required = true) @Validated(ValidationGroups.Create.class) AutomobileRequest req) throws Exception{
 		return ResponseEntity.ok(carService.create(req));
 	}
 	
+	@Transactional
 	@PatchMapping("update")
 	public ResponseEntity<Object> update(@RequestBody (required = true) @Validated(ValidationGroups.Update.class) AutomobileRequest req) throws Exception{
 		return ResponseEntity.ok(carService.update(req));
 	}
 	
+	@Transactional
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<Object> delete(@PathVariable (required = true) Integer id) throws Exception{
 		return ResponseEntity.ok(carService.delete(id));
