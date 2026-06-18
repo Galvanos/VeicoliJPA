@@ -14,6 +14,8 @@
 
     drop table if exists bici cascade;
 
+    drop table if exists categoria cascade;
+
     drop table if exists categorie_automobili cascade;
 
     drop table if exists moto cascade;
@@ -23,5 +25,7 @@
     drop table if exists tipo_freno cascade;
 
     drop table if exists tipo_sospensione cascade;
+
+    drop table if exists tipo_alimentazione cascade;
 
     drop table if exists veicolo cascade;

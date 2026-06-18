@@ -1,7 +1,6 @@
 package com.betacom.veh.services.implementation;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.betacom.veh.dto.input.BiciRequest;
 import com.betacom.veh.dto.mapping.BiciMap;

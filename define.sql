@@ -16,6 +16,12 @@
         primary key (id)
     );
 
+    create table categoria (
+        categoria varchar(255) not null,
+        tipo_veicolo varchar(255) not null,
+        primary key (categoria, tipo_veicolo)
+    );
+
     create table categorie_automobili (
         segmento char(1),
         categoria varchar(255) not null,
@@ -42,6 +48,12 @@
     create table tipo_sospensione (
         tipo_sospensione varchar(255) not null,
         primary key (tipo_sospensione)
+    );
+
+    create table tipo_alimentazione (
+        tipo_alimentazione varchar(255) not null,
+        tipo_veicolo varchar(255) not null,
+        primary key (tipo_alimentazione, tipo_veicolo)
     );
 
     create table veicolo (

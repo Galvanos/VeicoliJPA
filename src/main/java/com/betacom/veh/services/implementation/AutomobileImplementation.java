@@ -10,9 +10,11 @@ import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.mapping.AutomobileMap;
 import com.betacom.veh.dto.output.AutomobileDTO;
 import com.betacom.veh.models.Automobile;
+import com.betacom.veh.models.CategoriaId;
+import com.betacom.veh.models.TipoAlimentazioneId;
 import com.betacom.veh.repositories.IAutomobileRepository;
-import com.betacom.veh.repositories.ICategorieAutomobiliRepository;
-import com.betacom.veh.repositories.ITipiAlimentazioneMotorizzati;
+import com.betacom.veh.repositories.ICategoriaRepository;
+import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AutomobileImplementation implements IAutomobileService{
-	private final ICategorieAutomobiliRepository catRepo;
-	private final ITipiAlimentazioneMotorizzati typeRepo;
+	private final ICategoriaRepository catRepo;
+	private final ITipoAlimentazioneRepository typeRepo;
 	private final IAutomobileRepository carRepo;
 	private final static String PATTERN_TARGA_AUTO = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
+	private final static String tipoVeicolo = "AUTOMOBILE";
 
 	@Override
 	public AutomobileDTO create(AutomobileRequest req) throws Exception {
@@ -42,7 +45,7 @@ public class AutomobileImplementation implements IAutomobileService{
 		car.setNumeroPorte(req.getNumeroPorte());
 		car.setTipoAlimentazione(req.getTipoAlimentazione());
 		car.setModello(req.getModello());
-		car.setTipoVeicolo("AUTOMOBILE");
+		car.setTipoVeicolo(tipoVeicolo);
 		
 		AutomobileDTO carDto = AutomobileMap.buildAutomobileDTO(carRepo.save(car));
 		return carDto;
@@ -108,12 +111,12 @@ public class AutomobileImplementation implements IAutomobileService{
 				throw new RuntimeException("Numero di porte non valido.");
 		});
 		Optional.ofNullable(req.getCategoria()).ifPresent(categoria -> {
-			if(!catRepo.existsByCategoria(categoria.toUpperCase()))
+			if(!catRepo.existsByCategoriaId(CategoriaId.builder().tipoVeicolo(tipoVeicolo).categoria(categoria.toUpperCase()).build()))
 				throw new RuntimeException("Categoria non valida.");
 			else req.setCategoria(categoria.toUpperCase());
 		});
 		Optional.ofNullable(req.getTipoAlimentazione()).ifPresent(tipoAlimentazione -> {
-			if(!typeRepo.existsByTipo(tipoAlimentazione.toUpperCase()))
+			if(!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder().tipoVeicolo(tipoVeicolo).tipoAlimentazione(tipoAlimentazione.toUpperCase()).build()))
 				throw new RuntimeException("Tipo di alimentazione non valido.");
 			else req.setTipoAlimentazione(tipoAlimentazione.toUpperCase());
 		});
