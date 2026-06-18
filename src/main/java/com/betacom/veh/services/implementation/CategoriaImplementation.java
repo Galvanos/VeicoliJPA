@@ -5,12 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.betacom.veh.dto.input.CategoriaRequest;
+import com.betacom.veh.dto.mapping.CategoriaMap;
 import com.betacom.veh.dto.output.CategoriaDTO;
 import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Categoria;
 import com.betacom.veh.models.CategoriaId;
-import com.betacom.veh.models.TipoAlimentazione;
-import com.betacom.veh.models.TipoAlimentazioneId;
 import com.betacom.veh.repositories.ICategoriaRepository;
 import com.betacom.veh.services.interfaces.ICategoriaService;
 
@@ -40,14 +39,14 @@ public class CategoriaImplementation implements ICategoriaService{
 				.categoria(categoriaRequest.getCategoria())
 				.build()).orElseThrow(() -> new Exception("Categoria non trovata"));
 		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneMap.buildTipoAlimentazioneDTO(tipoToDelete);
-		catRepo.delete(categoriaToDelete);		
+		catRepo.delete(categoriaToDelete);	
+		//return tipoDeleted;
 	}
 
 	@Override
 	public List<CategoriaDTO> list() {
 		List<Categoria> lC = catRepo.findAll();
-		//return CategoriaMap.buildCategoriaDTOList(lC);
-		return null;
+		return CategoriaMap.buildCategoriaDTOList(lC);
 	}
 
 }
