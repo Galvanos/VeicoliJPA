@@ -45,7 +45,8 @@ public class CategoriaImplementation implements ICategoriaService{
 
 	@Override
 	public List<CategoriaDTO> list() {
-		// TODO Auto-generated method stub
+		List<Categoria> lC = catRepo.findAll();
+		//return CategoriaMap.buildCategoriaDTOList(lC);
 		return null;
 	}
 
