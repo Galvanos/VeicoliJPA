@@ -4,25 +4,46 @@ import java.util.List;
 
 import com.betacom.veh.dto.input.TipoAlimentazioneRequest;
 import com.betacom.veh.dto.output.TipoAlimentazioneDTO;
+import com.betacom.veh.exceptions.AcademyException;
+import com.betacom.veh.models.TipoAlimentazione;
+import com.betacom.veh.models.TipoAlimentazioneId;
+import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 import com.betacom.veh.services.interfaces.ITipoAlimentazioneService;
 
-public class TipoAlimentazioneImplementation implements ITipoAlimentazioneService{
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+public class TipoAlimentazioneImplementation implements ITipoAlimentazioneService{
+	private final ITipoAlimentazioneRepository typeRepo;
+	
 	@Override
 	public void create(TipoAlimentazioneRequest tipoAlimentazioneRequest) throws Exception {
-		// TODO Auto-generated method stub
-		
+		if(!tipoAlimentazioneRequest.getTipoVeicolo().toUpperCase().matches("\\d(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\d"))
+			throw new AcademyException("tipo di veicolo non riconosciuto.");
+		TipoAlimentazione nuovoTipo = new TipoAlimentazione();
+		nuovoTipo.setTipoAlimentazioneId(TipoAlimentazioneId.builder()
+										.tipoVeicolo(tipoAlimentazioneRequest.getTipoVeicolo())
+										.tipoAlimentazione(tipoAlimentazioneRequest.getTipoAlimentazione())
+										.build());
+		typeRepo.save(nuovoTipo);
 	}
 
+	
 	@Override
 	public void delete(TipoAlimentazioneRequest tipoAlimentazioneRequest) throws Exception {
-		// TODO Auto-generated method stub
+		TipoAlimentazione tipoToDelete = typeRepo.findById(TipoAlimentazioneId.builder()
+															.tipoVeicolo(tipoAlimentazioneRequest.getTipoVeicolo())
+															.tipoAlimentazione(tipoAlimentazioneRequest.getTipoAlimentazione())
+															.build()).orElseThrow(() -> new Exception("Tipo di alimentazione non trovato"));
+		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneDTO.buildTipoAlimentazioneDTO(tipoToDelete);
+		typeRepo.delete(tipoToDelete);
 		
 	}
 
 	@Override
 	public List<TipoAlimentazioneDTO> list() {
-		// TODO Auto-generated method stub
+		List<TipoAlimentazione> lTA = typeRepo.findAll();
+		//return TipoAlimentazioneMap.buildTipoAlimentazioneDTOList(lTA);
 		return null;
 	}
 
