@@ -7,16 +7,16 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.input.MotoRequest;
-import com.betacom.veh.dto.input.VeicoloRequest;
 import com.betacom.veh.dto.mapping.MotoMap;
 import com.betacom.veh.dto.output.MotoDTO;
 import com.betacom.veh.exceptions.AcademyException;
+import com.betacom.veh.models.CategoriaId;
 import com.betacom.veh.models.Moto;
-import com.betacom.veh.repositories.ICategorieMotoRepository;
+import com.betacom.veh.models.TipoAlimentazioneId;
+import com.betacom.veh.repositories.ICategoriaRepository;
 import com.betacom.veh.repositories.IMotoRepository;
-import com.betacom.veh.repositories.ITipiAlimentazioneMotorizzati;
+import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 import com.betacom.veh.services.interfaces.IMotoService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,9 +27,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class MotoImplementation implements IMotoService{
 	private final IMotoRepository repMoto;
-	private final ITipiAlimentazioneMotorizzati typeRepo;
-	private final ICategorieMotoRepository catRepo;
+	private final ITipoAlimentazioneRepository typeRepo;
+	private final ICategoriaRepository catRepo;
 	private final static String PATTERN_TARGA_MOTO = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
+	private final static String tipoVeicolo = "MOTOVEICOLO";
 
 
 	@Override
@@ -129,11 +130,17 @@ public class MotoImplementation implements IMotoService{
 		}); 
 		
 		Optional.ofNullable(req.getCategoria()).ifPresent(categoria -> {
-			if(!catRepo.existsByCategoria(categoria.toLowerCase()))
+			if(!catRepo.existsByCategoriaId(CategoriaId.builder()
+					.tipoVeicolo(tipoVeicolo)
+					.categoria(categoria.toUpperCase())
+					.build()))
 				throw new AcademyException("Categoria non valida.");
 		});
 		Optional.ofNullable(req.getTipoAlimentazione()).ifPresent(tipoAlimentazione -> {
-			if(!typeRepo.existsByTipo(tipoAlimentazione.toUpperCase()))
+			if(!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder()
+					.tipoVeicolo(tipoVeicolo)
+					.tipoAlimentazione(tipoAlimentazione.toUpperCase())
+					.build()))
 				throw new AcademyException("Tipo di alimentazione non valido.");
 		});
 			
