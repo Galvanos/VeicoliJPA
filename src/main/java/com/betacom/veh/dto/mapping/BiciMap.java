@@ -20,7 +20,7 @@ public class BiciMap {
 				.build();
 	}
 	
-	public static List<BiciDTO> buildAutomobileDTOList(List<Bici> list){
+	public static List<BiciDTO> buildBiciDTOList(List<Bici> list){
 		return list.stream().map(BiciMap::buildBiciDTO).toList();
 	}
 }
