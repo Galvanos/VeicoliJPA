@@ -5,8 +5,6 @@ import java.util.List;
 import com.betacom.veh.dto.input.TipoAlimentazioneRequest;
 import com.betacom.veh.dto.output.TipoAlimentazioneDTO;
 
-
-
 public interface ITipoAlimentazioneService {
 
 	void create(TipoAlimentazioneRequest tipoAlimentazioneRequest) throws Exception;
