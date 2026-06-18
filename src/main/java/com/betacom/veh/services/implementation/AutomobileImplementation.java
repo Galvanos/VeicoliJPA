@@ -112,12 +112,18 @@ public class AutomobileImplementation implements IAutomobileService{
 				throw new AcademyException("Numero di porte non valido.");
 		});
 		Optional.ofNullable(req.getCategoria()).ifPresent(categoria -> {
-			if(!catRepo.existsByCategoriaId(CategoriaId.builder().tipoVeicolo(tipoVeicolo).categoria(categoria.toUpperCase()).build()))
+			if(!catRepo.existsByCategoriaId(CategoriaId.builder()
+											.tipoVeicolo(tipoVeicolo)
+											.categoria(categoria.toUpperCase())
+											.build()))
 				throw new AcademyException("Categoria non valida.");
 			else req.setCategoria(categoria.toUpperCase());
 		});
 		Optional.ofNullable(req.getTipoAlimentazione()).ifPresent(tipoAlimentazione -> {
-			if(!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder().tipoVeicolo(tipoVeicolo).tipoAlimentazione(tipoAlimentazione.toUpperCase()).build()))
+			if(!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder()
+													.tipoVeicolo(tipoVeicolo)
+													.tipoAlimentazione(tipoAlimentazione.toUpperCase())
+													.build()))
 				throw new AcademyException("Tipo di alimentazione non valido.");
 			else req.setTipoAlimentazione(tipoAlimentazione.toUpperCase());
 		});
