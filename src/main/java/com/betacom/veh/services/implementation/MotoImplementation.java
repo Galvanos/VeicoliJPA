@@ -7,9 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.input.MotoRequest;
-import com.betacom.veh.dto.input.VeicoloRequest;
 import com.betacom.veh.dto.mapping.MotoMap;
 import com.betacom.veh.dto.output.MotoDTO;
 import com.betacom.veh.exceptions.AcademyException;
@@ -17,9 +15,7 @@ import com.betacom.veh.models.CategoriaId;
 import com.betacom.veh.models.Moto;
 import com.betacom.veh.models.TipoAlimentazioneId;
 import com.betacom.veh.repositories.ICategoriaRepository;
-import com.betacom.veh.repositories.ICategorieMotoRepository;
 import com.betacom.veh.repositories.IMotoRepository;
-import com.betacom.veh.repositories.ITipiAlimentazioneMotorizzati;
 import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 import com.betacom.veh.services.interfaces.IMotoService;
 
