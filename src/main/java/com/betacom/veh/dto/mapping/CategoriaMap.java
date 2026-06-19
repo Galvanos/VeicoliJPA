@@ -9,11 +9,13 @@ import com.betacom.veh.models.Categoria;
 public class CategoriaMap {
 
 	public static CategoriaDTO buildCategoriaDTO(Categoria categoria) {
-		
-		return null;
+		CategoriaDTO categoriaDTO = new CategoriaDTO();
+		categoriaDTO.setTipoVeicolo(categoria.getCategoriaId().getTipoVeicolo());
+		categoriaDTO.setCategoria(categoria.getCategoriaId().getCategoria());
+		return categoriaDTO;
 	}
 	
 	public static List<CategoriaDTO> buildCategoriaDTOList(List<Categoria> list){
-		return null;
+		 return list.stream().map(CategoriaMap::buildCategoriaDTO).toList();
 	}
 }
