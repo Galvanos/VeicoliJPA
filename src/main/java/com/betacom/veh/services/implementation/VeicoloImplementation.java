@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.betacom.veh.services.interfaces.IVeicoloService;
+import com.betacom.veh.utils.Utils;
 
 import jakarta.persistence.criteria.Root;
 
@@ -38,7 +39,9 @@ public class VeicoloImplementation implements IVeicoloService{
 			return VeicoloMap.buildVeicoloDTOList(
 		            veicoloRepository.findAll());
 		}else {
-			throw new UnsupportedOperationException("non implementato");
+			Specification<Veicolo> specification = buildSpecification(filters);
+			return VeicoloMap.buildVeicoloDTOList(
+		            veicoloRepository.findAll(specification));
 		}
 		
 	}
@@ -52,7 +55,6 @@ public class VeicoloImplementation implements IVeicoloService{
 	}
 	
 	private Specification<Veicolo> buildSpecification(ListVeicoloRequest filter){
-		Specification<Veicolo> specification = Specification.unrestricted();
 		
 		List<Specification<Veicolo>> filterSpec = new LinkedList<>();
 		
@@ -66,7 +68,7 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		List<Integer> ccList = filter.getCc();
 		
-		ccList = Optional.ofNullable(ccList).map(t -> t.isEmpty() ? null : t).orElse(null);
+		ccList = Optional.ofNullable(ccList).map(Utils::removeNulls).map(t -> t.isEmpty() ? null : t).orElse(null);
 
 		if (ccList != null) {
 			List<Integer> ccListFinal = ccList;
@@ -105,7 +107,7 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		List<Integer> numeroPorteList = filter.getNumeroPorte();
 		
-		numeroPorteList = Optional.ofNullable(numeroPorteList).map(t -> t.isEmpty()?null:t).orElse(null);
+		numeroPorteList = Optional.ofNullable(numeroPorteList).map(Utils::removeNulls).map(t -> t.isEmpty()?null:t).orElse(null);
 		
 		if(numeroPorteList != null) {
 			List<Integer> numeroPorteListFinal = numeroPorteList;
@@ -118,7 +120,7 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		List<Integer> numeroRapportiList = filter.getNumeroRapporti();
 		
-		numeroRapportiList = Optional.ofNullable(numeroRapportiList).map(t -> t.isEmpty() ? null : t).orElse(null);
+		numeroRapportiList = Optional.ofNullable(numeroRapportiList).map(Utils::removeNulls).map(t -> t.isEmpty() ? null : t).orElse(null);
 
 		if (numeroRapportiList != null) {
 			List<Integer> numeroRapportiListFinal = numeroRapportiList;
@@ -135,7 +137,7 @@ public class VeicoloImplementation implements IVeicoloService{
 
 		List<Boolean> pieghevoleList = filter.getPieghevole();
 		
-		pieghevoleList = Optional.ofNullable(pieghevoleList).map(t -> t.isEmpty() ? null : t).orElse(null);
+		pieghevoleList = Optional.ofNullable(pieghevoleList).map(Utils::removeNulls).map(t -> t.isEmpty() ? null : t).orElse(null);
 
 		if (pieghevoleList != null) {
 			List<Boolean> pieghevoleListFinal = pieghevoleList;
@@ -148,15 +150,61 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		List<String> targaList = filter.getTarga();
 		
-		//TODO riprendere qui facendo extract e riutilizzando
-		addStringParamToSpecificationList(filterSpec, targaList, "targa");
+		targaList = Optional.ofNullable(targaList).map(Utils::removeNullsAndBlanks).map(t -> t.isEmpty()?null:t).orElse(null);
+		
+		if(targaList != null) {
+			List<String> targaListFinal = targaList;
+			Specification<Veicolo> targaAutomobileSpecification = Specification.where((root, query, criteriaBuilder) -> {
+				Root<Automobile> automobileRoot = criteriaBuilder.treat(root, Automobile.class);
+				return automobileRoot.get("targa").in(targaListFinal);
+			});
+			Specification<Veicolo> targaMotoSpecification = Specification.where((root, query, criteriaBuilder) -> {
+				Root<Moto> motoRoot = criteriaBuilder.treat(root, Moto.class);
+				return motoRoot.get("targa").in(targaListFinal);
+			});
+			
+			Specification<Veicolo> targaSpecification = Specification.anyOf(targaAutomobileSpecification,targaMotoSpecification);
+			
+			filterSpec.add(targaSpecification);
+		}
+		
+		List<String> tipoAlimentazioneList = filter.getTipoAlimentazione();
+		
+		addStringParamToSpecificationList(filterSpec, tipoAlimentazioneList, "tipoAlimentazione");
+		
+		List<String> tipoFrenoList = filter.getTipoFreno();
+		
+		tipoFrenoList = Optional.ofNullable(tipoFrenoList).map(Utils::removeNullsAndBlanks).map(t -> t.isEmpty() ? null : t).orElse(null);
+
+		if (tipoFrenoList != null) {
+			List<String> tipoFrenoListFinal = tipoFrenoList;
+			Specification<Veicolo> tipoFrenoSpecification = Specification.where((root, query, criteriaBuilder) -> {
+				Root<Bici> biciRoot = criteriaBuilder.treat(root, Bici.class);
+				return biciRoot.get("tipoFreno").in(tipoFrenoListFinal);
+			});
+			filterSpec.add(tipoFrenoSpecification);
+		}
+		
+		List<String> tipoSospensioneList = filter.getTipoSospensione();
+		
+		tipoSospensioneList = Optional.ofNullable(tipoSospensioneList).map(Utils::removeNullsAndBlanks).map(t -> t.isEmpty() ? null : t).orElse(null);
+
+		if (tipoSospensioneList != null) {
+			List<String> tipoSospensioneListFinal = tipoSospensioneList;
+			Specification<Veicolo> tipoSospensioneSpecification = Specification.where((root, query, criteriaBuilder) -> {
+				Root<Bici> biciRoot = criteriaBuilder.treat(root, Bici.class);
+				return biciRoot.get("tipoSospensione").in(tipoSospensioneListFinal);
+			});
+			filterSpec.add(tipoSospensioneSpecification);
+		}
+		
 		
 		return Specification.allOf(filterSpec);
 	}
 
 	private void addIntegerParamToSpecificationList(List<Specification<Veicolo>> filterSpec,
 			List<Integer> integerParamList, String fieldName) {
-		integerParamList = Optional.ofNullable(integerParamList).map(t -> t.isEmpty()?null:t).orElse(null);
+		integerParamList = Optional.ofNullable(integerParamList).map(Utils::removeNulls).map(t -> t.isEmpty()?null:t).orElse(null);
 		
 		if(integerParamList != null) {
 			List<Integer> integerParamListFinal = integerParamList;
@@ -168,7 +216,7 @@ public class VeicoloImplementation implements IVeicoloService{
 
 	private void addStringParamToSpecificationList(List<Specification<Veicolo>> filterSpec,
 			List<String> stringParamList, String fieldName) {
-		stringParamList = Optional.ofNullable(stringParamList).map(t -> t.isEmpty()?null:t).orElse(null);
+		stringParamList = Optional.ofNullable(stringParamList).map(Utils::removeNullsAndBlanks).map(t -> t.isEmpty()?null:t).orElse(null);
 		
 		if(stringParamList != null) {
 			List<String> stringParamListFinal = stringParamList;
@@ -177,5 +225,6 @@ public class VeicoloImplementation implements IVeicoloService{
 			filterSpec.add(stringParamSpecification);
 		}
 	}
+	
 
 }
