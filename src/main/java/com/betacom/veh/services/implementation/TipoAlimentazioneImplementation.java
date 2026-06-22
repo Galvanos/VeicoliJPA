@@ -41,6 +41,7 @@ public class TipoAlimentazioneImplementation implements ITipoAlimentazioneServic
 															.build()).orElseThrow(() -> new Exception("Tipo di alimentazione non trovato"));
 		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneMap.buildTipoAlimentazioneDTO(tipoToDelete);
 		typeRepo.delete(tipoToDelete);
+		//return tipoDeleted;
 		
 	}
 
