@@ -29,7 +29,7 @@ public class MotoImplementation implements IMotoService{
 	private final IMotoRepository repMoto;
 	private final ITipoAlimentazioneRepository typeRepo;
 	private final ICategoriaRepository catRepo;
-	private final static String PATTERN_TARGA_MOTO = "^[a-zA-Z]{2}[0-9]{3}[a-zA-Z]{2}$";
+	private final static String PATTERN_TARGA_MOTO = "^[a-zA-Z]{2}[0-9]{5,6}$";
 	private final static String tipoVeicolo = "MOTOVEICOLO";
 
 

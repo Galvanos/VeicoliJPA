@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.betacom.veh.dto.input.TipoAlimentazioneRequest;
+import com.betacom.veh.dto.mapping.TipoAlimentazioneMap;
 import com.betacom.veh.dto.output.TipoAlimentazioneDTO;
 import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.TipoAlimentazione;
@@ -40,14 +41,14 @@ public class TipoAlimentazioneImplementation implements ITipoAlimentazioneServic
 															.build()).orElseThrow(() -> new Exception("Tipo di alimentazione non trovato"));
 		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneMap.buildTipoAlimentazioneDTO(tipoToDelete);
 		typeRepo.delete(tipoToDelete);
+		//return tipoDeleted;
 		
 	}
 
 	@Override
 	public List<TipoAlimentazioneDTO> list() {
 		List<TipoAlimentazione> lTA = typeRepo.findAll();
-		//return TipoAlimentazioneMap.buildTipoAlimentazioneDTOList(lTA);
-		return null;
+		return TipoAlimentazioneMap.buildTipoAlimentazioneDTOList(lTA);
 	}
 
 }
