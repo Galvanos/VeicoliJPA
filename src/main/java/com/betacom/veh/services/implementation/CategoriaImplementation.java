@@ -51,7 +51,8 @@ public class CategoriaImplementation implements ICategoriaService{
 				.categoria(categoriaRequest.getCategoria())
 				.build()).orElseThrow(() -> new AcademyException("Categoria non trovata"));
 		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneMap.buildTipoAlimentazioneDTO(tipoToDelete);
-		catRepo.delete(categoriaToDelete);		
+		catRepo.delete(categoriaToDelete);	
+		//return tipoDeleted;
 	}
 
 	@Override
