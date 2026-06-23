@@ -1,7 +1,9 @@
 package com.betacom.veh.services.implementation;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.betacom.veh.dto.input.TipoAlimentazioneRequest;
@@ -22,12 +24,18 @@ public class TipoAlimentazioneImplementation implements ITipoAlimentazioneServic
 	
 	@Override
 	public void create(TipoAlimentazioneRequest tipoAlimentazioneRequest) throws Exception {
-		if(!tipoAlimentazioneRequest.getTipoVeicolo().toUpperCase().matches("\\d(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\d"))
+		String tipoVeicolo = tipoAlimentazioneRequest.getTipoVeicolo();
+		tipoVeicolo = Optional.ofNullable(tipoVeicolo).map(String::trim).map(String::toUpperCase).orElse(null);
+		if(!tipoVeicolo.matches("\\b(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\b"))
 			throw new AcademyException("tipo di veicolo non riconosciuto.");
 		TipoAlimentazione nuovoTipo = new TipoAlimentazione();
+		String tipoAlimentazione = tipoAlimentazioneRequest.getTipoAlimentazione();
+		tipoAlimentazione = Optional.ofNullable(tipoAlimentazione)
+				.map(StringUtils::normalizeSpace).map(String::toUpperCase)
+				.map(t -> t.replace(' ','_')).orElse(null);
 		nuovoTipo.setTipoAlimentazioneId(TipoAlimentazioneId.builder()
-										.tipoVeicolo(tipoAlimentazioneRequest.getTipoVeicolo())
-										.tipoAlimentazione(tipoAlimentazioneRequest.getTipoAlimentazione())
+										.tipoVeicolo(tipoVeicolo)
+										.tipoAlimentazione(tipoAlimentazione)
 										.build());
 		typeRepo.save(nuovoTipo);
 	}
