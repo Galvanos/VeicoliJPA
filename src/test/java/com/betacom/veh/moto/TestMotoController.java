@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,14 +24,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.betacom.veh.dto.input.MotoRequest;
+import com.betacom.veh.dto.mapping.MotoMap;
 import com.betacom.veh.dto.output.MotoDTO;
 import com.betacom.veh.dto.output.ResponseDTO;
 import com.betacom.veh.models.Categoria;
 import com.betacom.veh.models.CategoriaId;
+import com.betacom.veh.models.Moto;
 import com.betacom.veh.models.TipoAlimentazione;
 import com.betacom.veh.models.TipoAlimentazioneId;
 import com.betacom.veh.repositories.ICategoriaRepository;
+import com.betacom.veh.repositories.IMotoRepository;
 import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
+import com.betacom.veh.utils.GeneraTargaMoto;
+
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +57,18 @@ public class TestMotoController {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private ITipoAlimentazioneRepository aliRepo;
+	@Autowired
+	private IMotoRepository motoRepo;
+	
+	private GeneraTargaMoto targa = new GeneraTargaMoto();
+	
+	@BeforeAll
+    public static void setup(
+    		@Autowired IMotoRepository motoRepo, 
+    		@Autowired ITipoAlimentazioneRepository aliRepo) {
+        motoRepo.deleteAll();
+        aliRepo.deleteAll();
+    }
 	
 	@Test
 	@Order(1)
@@ -59,7 +78,6 @@ public class TestMotoController {
 		if (!aliRepo.existsById(new TipoAlimentazioneId("MOTOVEICOLO","BENZINA"))) {
 	        aliRepo.saveAndFlush(new TipoAlimentazione(new TipoAlimentazioneId("MOTOVEICOLO","BENZINA")));
 	    }
-		
 		MotoRequest req = MotoRequest.builder()
                 .targa("AB123CD")
                 .cc(600)
@@ -73,10 +91,9 @@ public class TestMotoController {
                 .build();
 		
 		mockMvc.perform(post("/rest/moto/create")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(req)))
-				//.andDo(print())
-				.andExpect(status().isOk());
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(req)))
+	            .andExpect(status().isOk());
 	}
 	
 	@Test
@@ -109,11 +126,10 @@ public class TestMotoController {
 	
 	@Test
 	@Order(3)
-	public void createMotoTargaDuplicateErrorTest() throws Exception{
-		log.debug("createMotoTargaDuplicateErrorTest");
+	public void createMotoCcErrorTest() throws Exception{
+		log.debug("createMotoCcErrorTest");
 		MotoRequest req = MotoRequest.builder()
                 .targa("AB123CD")
-                .cc(600)
                 .numeroRuote(2)
                 .tipoAlimentazione("BENZINA")
                 .categoria("MOUNTAIN")
@@ -137,10 +153,12 @@ public class TestMotoController {
 	
 	@Test
 	@Order(4)
-	public void createMotoCcErrorTest() throws Exception{
-		log.debug("createMotoCcErrorTest");
+	public void createMotoTargaDuplicateErrorTest() throws Exception{
+		log.debug("createMotoTargaDuplicateErrorTest");
+		
 		MotoRequest req = MotoRequest.builder()
-                .targa("AB123CC")
+                .targa("AB123CD")
+                .cc(600)
                 .numeroRuote(2)
                 .tipoAlimentazione("BENZINA")
                 .categoria("MOUNTAIN")
@@ -150,17 +168,13 @@ public class TestMotoController {
                 .modello("Panigale")
                 .build();
 		
-		MvcResult result = mockMvc.perform(post("/rest/moto/create")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(req)))
-				.andExpect(status().isBadRequest())		 
-				.andReturn();
-		
-		String json = result.getResponse().getContentAsString();
-		ResponseDTO dto = objectMapper.readValue(json, ResponseDTO.class);
-		
-		log.debug("rc create :{}", dto.getMsg());
+		mockMvc.perform(post("/rest/moto/create")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(req)))
+	            .andExpect(status().isBadRequest());
 	}
+	
+	
 
 	@Test
 	@Order(5)
@@ -319,19 +333,17 @@ public class TestMotoController {
 		lM.forEach(m -> log.debug(m.toString()));
 	}
 	
-	/*
+	
 	@Test
-	@Order(4)
+	@Order(11)
 	public void getByIdMotoTest() throws Exception{
 		log.debug("getByIdAttivita");
 		
 		MvcResult result = mockMvc.perform(get("/rest/moto/getById").param("id", "1"))
-				//.andDo(print())
 	            .andExpect(status().isOk())
 	            .andReturn();
 		  
 		String json = result.getResponse().getContentAsString();
-		
 		MotoDTO mo = objectMapper.readValue(json,MotoDTO.class);
 		
 		log.debug(mo.toString());
@@ -339,8 +351,7 @@ public class TestMotoController {
 
 	
 	@Test
-	@Order (5)
-	//@org.springframework.test.annotation.Commit
+	@Order (12)
 	public void updateMotoTest() throws Exception {
 		log.debug("updateMotoTest");
 		MotoRequest req = MotoRequest.builder()
@@ -352,21 +363,17 @@ public class TestMotoController {
 		mockMvc.perform(put("/rest/moto/update")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(req)))
-				//.andDo(print())
 				.andExpect(status().isOk());
 	}
 	
 	@Test
-	@Order(6)
-	//@org.springframework.test.annotation.Commit
+	@Order(13)
 	public void deleteMotoTest() throws Exception{
 		log.debug("deleteMoto");
 		
 		mockMvc.perform(MockMvcRequestBuilders.delete("/rest/moto/delete/1"))
-				//.andDo(print())
 	            .andExpect(status().isOk())
 	            .andExpect(jsonPath("$.msg").exists());
 		  
-	}*/
-
+	}
 }

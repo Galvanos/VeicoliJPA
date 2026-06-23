@@ -41,9 +41,6 @@ public class MotoImplementation implements IMotoService{
 		String targa = req.getTarga().trim().toUpperCase();
 		req.setTarga(targa);
 		
-		if (repMoto.existsByTarga(targa))
-			throw new AcademyException("Eccezione targa moto esiste già");
-		
 		Moto moto = new Moto();
 		
 		moto.setId(null);
