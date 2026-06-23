@@ -65,7 +65,6 @@ public class MotoImplementation implements IMotoService{
 	}
 	
 	@Override
-	@Transactional
 	public List<MotoDTO> list() throws Exception {
 		log.debug("list moto :{}");
 		List<Moto> lMoto = repMoto.findAll();
@@ -73,13 +72,13 @@ public class MotoImplementation implements IMotoService{
 	}
 	
 	@Override
-	@Transactional
 	public MotoDTO getById(Integer id) throws Exception {
 		log.debug("getById moto per id:{}", id);
 		Moto moto = repMoto.findById(id)
 				.orElseThrow(() -> new AcademyException("Id moto non trovato"));
 		return MotoMap.buildMotoDTO(moto);
 	}
+	
 	@Override
 	@Transactional
 	public MotoDTO update(MotoRequest req) throws Exception {
