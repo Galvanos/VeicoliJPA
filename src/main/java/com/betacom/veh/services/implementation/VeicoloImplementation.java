@@ -9,11 +9,14 @@ import org.springframework.stereotype.Service;
 import com.betacom.veh.services.interfaces.IVeicoloService;
 import com.betacom.veh.utils.Utils;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.betacom.veh.dto.input.ListVeicoloRequest;
 import com.betacom.veh.dto.mapping.VeicoloMap;
@@ -62,6 +65,8 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		addIntegerParamToSpecificationList(filterSpec, annoProduzioneList, "annoProduzione");
 		
+		addMinMaxIntParamToSpecificationList(filterSpec, filter.getMinAnnoProduzione(), filter.getMaxAnnoProduzione(), "annoProduzione");
+		
 		List<String> categoriaList = filter.getCategoria();
 		
 		addStringParamToSpecificationList(filterSpec, categoriaList, "categoria");
@@ -89,9 +94,19 @@ public class VeicoloImplementation implements IVeicoloService{
 			filterSpec.add(ccSpecification);
 		}
 		
+		List<Specification<Veicolo>> minMaxCc = new LinkedList<>();
+		
+		addMinMaxIntParamToSpecificationListAutomobile(minMaxCc, filter.getMinCc(), filter.getMaxCc(), "cc");
+		
+		addMinMaxIntParamToSpecificationListMoto(minMaxCc, filter.getMinCc(), filter.getMaxCc(), "cc");
+		
+		Specification<Veicolo> minMaxCcSpecification = Specification.anyOf(minMaxCc);
+		
+		filterSpec.add(minMaxCcSpecification);
+		
 		List<String> coloreList = filter.getColore();
 		
-		addStringParamToSpecificationList(filterSpec, coloreList, "colore");
+		addStringParamCaseInsensitiveLikeToSpecificationList(filterSpec, coloreList, "colore");
 		
 		List<Integer> idList = filter.getId();
 		
@@ -99,11 +114,11 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		List<String> marcaList = filter.getMarca();
 		
-		addStringParamToSpecificationList(filterSpec, marcaList, "marca");
+		addStringParamCaseInsensitiveLikeToSpecificationList(filterSpec, marcaList, "marca");
 		
 		List<String> modelloList = filter.getModello();
 		
-		addStringParamToSpecificationList(filterSpec, modelloList, "modello");
+		addStringParamCaseInsensitiveLikeToSpecificationList(filterSpec, modelloList, "modello");
 		
 		List<Integer> numeroPorteList = filter.getNumeroPorte();
 		
@@ -117,6 +132,8 @@ public class VeicoloImplementation implements IVeicoloService{
 			});
 			filterSpec.add(numeroPorteSpecification);
 		}
+		
+		addMinMaxIntParamToSpecificationListAutomobile(filterSpec, filter.getMinNumeroPorte(), filter.getMaxNumeroPorte(), "numeroPorte");
 		
 		List<Integer> numeroRapportiList = filter.getNumeroRapporti();
 		
@@ -134,6 +151,8 @@ public class VeicoloImplementation implements IVeicoloService{
 		List<Integer> numeroRuoteList = filter.getNumeroRuote();
 		
 		addIntegerParamToSpecificationList(filterSpec, numeroRuoteList, "numeroRuote");
+		
+		addMinMaxIntParamToSpecificationList(filterSpec, filter.getMinNumeroPorte(), filter.getMaxNumeroRuote(), "numeroRuote");
 
 		List<Boolean> pieghevoleList = filter.getPieghevole();
 		
@@ -156,11 +175,15 @@ public class VeicoloImplementation implements IVeicoloService{
 			List<String> targaListFinal = targaList;
 			Specification<Veicolo> targaAutomobileSpecification = Specification.where((root, query, criteriaBuilder) -> {
 				Root<Automobile> automobileRoot = criteriaBuilder.treat(root, Automobile.class);
-				return automobileRoot.get("targa").in(targaListFinal);
+				List<Specification<Automobile>> targaSpecList = targaListFinal.stream().map(targa -> createLikeSpecificationAutomobile("targa", targa)).toList();
+				Specification<Automobile> anyTargheTest = Specification.anyOf(targaSpecList);
+				return anyTargheTest.toPredicate(automobileRoot, query, criteriaBuilder);
 			});
 			Specification<Veicolo> targaMotoSpecification = Specification.where((root, query, criteriaBuilder) -> {
 				Root<Moto> motoRoot = criteriaBuilder.treat(root, Moto.class);
-				return motoRoot.get("targa").in(targaListFinal);
+				List<Specification<Moto>> targaSpecList = targaListFinal.stream().map(targa -> createLikeSpecificationMoto("targa", targa)).toList();
+				Specification<Moto> anyTargheTest = Specification.anyOf(targaSpecList);
+				return anyTargheTest.toPredicate(motoRoot, query, criteriaBuilder);
 			});
 			
 			Specification<Veicolo> targaSpecification = Specification.anyOf(targaAutomobileSpecification,targaMotoSpecification);
@@ -201,6 +224,14 @@ public class VeicoloImplementation implements IVeicoloService{
 		
 		return Specification.allOf(filterSpec);
 	}
+	
+	private Specification<Automobile> createLikeSpecificationAutomobile(String fieldName, String param) {
+		return createLikeSpecification(fieldName, param);
+	}
+
+	private Specification<Moto> createLikeSpecificationMoto(String fieldName, String param) {
+		return createLikeSpecification(fieldName, param);
+	}
 
 	private void addIntegerParamToSpecificationList(List<Specification<Veicolo>> filterSpec,
 			List<Integer> integerParamList, String fieldName) {
@@ -226,5 +257,129 @@ public class VeicoloImplementation implements IVeicoloService{
 		}
 	}
 	
+	private void addStringParamCaseInsensitiveLikeToSpecificationList(List<Specification<Veicolo>> filterSpec,
+			List<String> stringParamList, String fieldName) {
+		stringParamList = Optional.ofNullable(stringParamList).map(Utils::removeNullsAndBlanks).map(t -> t.isEmpty()?null:t).orElse(null);
+		if (stringParamList != null) {
+			List<Specification<Veicolo>> listLike=stringParamList.stream().map(t -> createLikeSpecificationVeicolo(fieldName, t)).toList();
+			Specification<Veicolo> allLike = Specification.anyOf(listLike);
+			filterSpec.add(allLike);
+		}
+	}
 
+	private Specification<Veicolo> createLikeSpecificationVeicolo(String fieldName, String param) {
+		return createLikeSpecification(fieldName, param);
+	}
+	
+	private <T> Specification<T> createLikeSpecification(String fieldName, String param){
+		return Specification.where((root, query, criteriaBuilder) -> {
+			String likePattern = param.toUpperCase();
+			likePattern = "%" + likePattern + "%";
+			return criteriaBuilder.like(criteriaBuilder.upper(root.get(fieldName)), likePattern);
+		});
+	}
+	
+	private void addMinMaxIntParamToSpecificationList(List<Specification<Veicolo>> filterSpec,Integer min,Integer max,String fieldName) {
+		Specification<Veicolo> minSpec = Optional.ofNullable(min).map(t -> createMinSpecification(t, fieldName)).orElse(null);
+		Specification<Veicolo> maxSpec = Optional.ofNullable(max).map(t -> createMaxSpecification(t, fieldName)).orElse(null);
+		if(minSpec != null) {
+			filterSpec.add(minSpec);
+		}
+		if(maxSpec != null) {
+			filterSpec.add(maxSpec);
+		}
+	}
+
+	private Specification<Veicolo> createMinSpecification(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get(fieldName), min));
+	}
+	
+	private Specification<Veicolo> createMaxSpecification(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get(fieldName), min));
+	}
+	
+	
+	private void addMinMaxIntParamToSpecificationListMoto(List<Specification<Veicolo>> filterSpec, Integer min,
+			Integer max, String fieldName) {
+		Specification<Veicolo> minSpec = Optional.ofNullable(min).map(t -> createMinSpecificationMoto(t, fieldName))
+				.orElse(null);
+		Specification<Veicolo> maxSpec = Optional.ofNullable(max).map(t -> createMaxSpecificationMoto(t, fieldName))
+				.orElse(null);
+		if (minSpec != null) {
+			filterSpec.add(minSpec);
+		}
+		if (maxSpec != null) {
+			filterSpec.add(maxSpec);
+		}
+	}
+
+	private Specification<Veicolo> createMinSpecificationMoto(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> {
+			Root<Moto> rootMoto = criteriaBuilder.treat(root, Moto.class);
+			return criteriaBuilder.greaterThanOrEqualTo(rootMoto.get(fieldName), min);
+		});
+	}
+
+	private Specification<Veicolo> createMaxSpecificationMoto(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> {
+			Root<Moto> rootMoto = criteriaBuilder.treat(root, Moto.class);
+			return criteriaBuilder.lessThanOrEqualTo(rootMoto.get(fieldName), min);
+		});
+	}
+
+	private void addMinMaxIntParamToSpecificationListAutomobile(List<Specification<Veicolo>> filterSpec, Integer min,
+			Integer max, String fieldName) {
+		Specification<Veicolo> minSpec = Optional.ofNullable(min)
+				.map(t -> createMinSpecificationAutomobile(t, fieldName)).orElse(null);
+		Specification<Veicolo> maxSpec = Optional.ofNullable(max)
+				.map(t -> createMaxSpecificationAutomobile(t, fieldName)).orElse(null);
+		if (minSpec != null) {
+			filterSpec.add(minSpec);
+		}
+		if (maxSpec != null) {
+			filterSpec.add(maxSpec);
+		}
+	}
+
+	private Specification<Veicolo> createMinSpecificationAutomobile(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> {
+			Root<Automobile> rootAutomobile = criteriaBuilder.treat(root, Automobile.class);
+			return criteriaBuilder.greaterThanOrEqualTo(rootAutomobile.get(fieldName), min);
+		});
+	}
+
+	private Specification<Veicolo> createMaxSpecificationAutomobile(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> {
+			Root<Automobile> rootAutomobile = criteriaBuilder.treat(root, Automobile.class);
+			return criteriaBuilder.lessThanOrEqualTo(rootAutomobile.get(fieldName), min);
+		});
+	}
+
+	private void addMinMaxIntParamToSpecificationListBici(List<Specification<Veicolo>> filterSpec, Integer min,
+			Integer max, String fieldName) {
+		Specification<Veicolo> minSpec = Optional.ofNullable(min).map(t -> createMinSpecificationBici(t, fieldName))
+				.orElse(null);
+		Specification<Veicolo> maxSpec = Optional.ofNullable(max).map(t -> createMaxSpecificationBici(t, fieldName))
+				.orElse(null);
+		if (minSpec != null) {
+			filterSpec.add(minSpec);
+		}
+		if (maxSpec != null) {
+			filterSpec.add(maxSpec);
+		}
+	}
+
+	private Specification<Veicolo> createMinSpecificationBici(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> {
+			Root<Bici> rootBici = criteriaBuilder.treat(root, Bici.class);
+			return criteriaBuilder.greaterThanOrEqualTo(rootBici.get(fieldName), min);
+		});
+	}
+
+	private Specification<Veicolo> createMaxSpecificationBici(Integer min, String fieldName) {
+		return Specification.where((root, query, criteriaBuilder) -> {
+			Root<Bici> rootBici = criteriaBuilder.treat(root, Bici.class);
+			return criteriaBuilder.lessThanOrEqualTo(rootBici.get(fieldName), min);
+		});
+	}
 }

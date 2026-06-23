@@ -20,17 +20,27 @@ public class ListVeicoloRequest {
 
 	private List<Integer> id;
     private List<Integer> numeroRuote;
+    private Integer minNumeroRuote;
+    private Integer maxNumeroRuote;
     private List<String> tipoAlimentazione;
     private List<String> categoria;
     private List<String> colore;
     private List<String> marca;
     private List<Integer> annoProduzione;
+    private Integer minAnnoProduzione;
+    private Integer maxAnnoProduzione;
     private List<String> modello;
  	private List<Integer> numeroRapporti;
+ 	private Integer minNumeroRapporti;
+    private Integer maxNumeroRapporti;
     private List<String> tipoFreno;
     private List<String> tipoSospensione;
 	private List<Boolean> pieghevole;
  	private List<String> targa;
     private List<Integer> numeroPorte;
+    private Integer minNumeroPorte;
+    private Integer maxNumeroPorte;
     private List<Integer> cc;
+    private Integer minCc;
+    private Integer maxCc;
 }
