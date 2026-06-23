@@ -119,6 +119,13 @@ public class AutomobileTest {
 		json = result.getResponse().getContentAsString();
 		dto = objectMapper.readValue(json, ResponseDTO.class);
 		
+		log.debug("error: " + dto.getMsg() + ", expected: " + "'anno invalido'");
+		request.setAnnoProduzione(LocalDateTime.now().getYear()+1);						//test anno nel futuro
+		result = getPostErrorResult("/rest/automobile/create", request);
+				
+		json = result.getResponse().getContentAsString();
+		dto = objectMapper.readValue(json, ResponseDTO.class);
+		
 		log.debug("error: " + dto.getMsg() + ", expected: " + "'anno invalido'");		
 		request.setAnnoProduzione(LocalDateTime.now().getYear());	//reset valore
 		
@@ -149,7 +156,14 @@ public class AutomobileTest {
 		log.debug("error: " + dto.getMsg() + ", expected: " + "'tipo alimentazione non valido'");
 		request.setTipoAlimentazione("BENZINA");	//reset valore
 		
-		request.setNumeroRuote(-1);											//test numero ruote
+		request.setNumeroRuote(-1);											//test numero ruote negativo
+		result = getPostErrorResult("/rest/automobile/create", request);
+		
+		json = result.getResponse().getContentAsString();
+		dto = objectMapper.readValue(json, ResponseDTO.class);
+
+		log.debug("error: " + dto.getMsg() + ", expected: " + "'numero ruote non valido'");
+		request.setNumeroRuote(580);											//test numero ruote fuori scala
 		result = getPostErrorResult("/rest/automobile/create", request);
 		
 		json = result.getResponse().getContentAsString();
@@ -158,14 +172,20 @@ public class AutomobileTest {
 		log.debug("error: " + dto.getMsg() + ", expected: " + "'numero ruote non valido'");
 		request.setNumeroRuote(4);		//reset valore
 		
-		request.setNumeroPorte(333);											//test numero porte
+		request.setNumeroPorte(333);											//test numero porte fuori scala
 		result = getPostErrorResult("/rest/automobile/create", request);
 		
 		json = result.getResponse().getContentAsString();
 		dto = objectMapper.readValue(json, ResponseDTO.class);
 
 		log.debug("error: " + dto.getMsg() + ", expected: " + "'numero porte non valido'");
-		request.setNumeroPorte(7);		//reset valore
+		request.setNumeroPorte(-4);											//test numero porte negativo
+		result = getPostErrorResult("/rest/automobile/create", request);
+		
+		json = result.getResponse().getContentAsString();
+		dto = objectMapper.readValue(json, ResponseDTO.class);
+
+		log.debug("error: " + dto.getMsg() + ", expected: " + "'numero porte non valido'");
 	}
 	
 	@Test
@@ -180,6 +200,22 @@ public class AutomobileTest {
 	public void updateAutomobileTestDifferentTarga() throws Exception{
 		AutomobileDTO insertedCar = insertAutomobile("XX333FF");
 		updateAutomobile("FF999NW", insertedCar.getId());
+	}
+	
+	@Test
+	@Order(5)
+	public void updateAutomobileTestError() throws Exception{
+		AutomobileRequest request = AutomobileRequest.builder().id(99999999).cc(250).targa("RF444GB").build();
+		MvcResult result = mockMvc.perform(patch("/rest/automobile/update")				
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))
+				).andExpect(status().isBadRequest())
+				.andReturn();
+
+		String json = result.getResponse().getContentAsString();
+		ResponseDTO dto = objectMapper.readValue(json, ResponseDTO.class);
+		
+		log.debug("update result: " + dto);
 	}
 	
 	private void updateAutomobile(String targa, Integer id) throws Exception{
@@ -201,7 +237,7 @@ public class AutomobileTest {
 	}
 	
 	@Test
-	@Order(5)
+	@Order(6)
 	public void deleteAutomobileTest() throws Exception{
 		AutomobileDTO insertedCar = insertAutomobile("DD333FF");
 		mockMvc.perform(delete("/rest/automobile/delete/" + insertedCar.getId()))
@@ -210,7 +246,15 @@ public class AutomobileTest {
 	}
 	
 	@Test
-	@Order(6)
+	@Order(7)
+	public void deleteAutomobileTestError() throws Exception{
+		mockMvc.perform(delete("/rest/automobile/delete/" + 999999999))
+        	.andExpect(status().isBadRequest());
+		log.debug("Auto deleted");
+	}
+	
+	@Test
+	@Order(8)
 	public void getAutomobileByIdTest() throws Exception{
 		AutomobileDTO insertedCar = insertAutomobile("HH223FF");
 		MvcResult result = mockMvc.perform(get("/rest/automobile/getById").param("id", insertedCar.getId().toString()))
@@ -223,7 +267,19 @@ public class AutomobileTest {
 	}
 	
 	@Test
-	@Order(7)
+	@Order(9)
+	public void getAutomobileByIdTestError() throws Exception{
+		MvcResult result = mockMvc.perform(get("/rest/automobile/getById").param("id", "99999999"))
+			.andExpect(status().isBadRequest())
+			.andReturn();
+		
+		String json = result.getResponse().getContentAsString();
+		ResponseDTO errorMessage = objectMapper.readValue(json, ResponseDTO.class);		
+		log.debug("" + errorMessage.getMsg());
+	}
+	
+	@Test
+	@Order(10)
 	public void getAllAutomobile() throws Exception{
 		MvcResult result = mockMvc.perform(get("/rest/automobile/list"))
 	            .andExpect(status().isOk())
