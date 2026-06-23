@@ -1,7 +1,9 @@
 package com.betacom.veh.services.implementation;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.betacom.veh.dto.input.CategoriaRequest;
@@ -22,12 +24,22 @@ public class CategoriaImplementation implements ICategoriaService{
 	
 	@Override
 	public void create(CategoriaRequest categoriaRequest) throws Exception {
-		if(!categoriaRequest.getTipoVeicolo().toUpperCase().matches("\\b(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\b"))
+		String tipoVeicolo = categoriaRequest.getTipoVeicolo();
+		//il null viene già verificato in fase di validazione
+		tipoVeicolo = Optional.ofNullable(tipoVeicolo).map(String::trim).map(String::toUpperCase).orElse(null);
+		if(!tipoVeicolo.matches("\\b(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\b"))
 			throw new AcademyException("tipo di veicolo non riconosciuto.");
 		Categoria nuovaCategoria = new Categoria();
+		String categoria = categoriaRequest.getCategoria();
+		//normalizzazione della categoria, il null viene già verificato in fase di validazione
+		categoria = Optional.ofNullable(categoria)
+				.map(StringUtils::normalizeSpace)
+				.map(String::toUpperCase)
+				.map(t -> t.replace(" ", "_"))
+				.orElse(null);
 		nuovaCategoria.setCategoriaId(CategoriaId.builder()
-										.tipoVeicolo(categoriaRequest.getTipoVeicolo())
-										.categoria(categoriaRequest.getCategoria())
+										.tipoVeicolo(tipoVeicolo)
+										.categoria(categoria)
 										.build());
 		catRepo.save(nuovaCategoria);
 	}
@@ -37,7 +49,7 @@ public class CategoriaImplementation implements ICategoriaService{
 		Categoria categoriaToDelete = catRepo.findById(CategoriaId.builder()
 				.tipoVeicolo(categoriaRequest.getTipoVeicolo())
 				.categoria(categoriaRequest.getCategoria())
-				.build()).orElseThrow(() -> new Exception("Categoria non trovata"));
+				.build()).orElseThrow(() -> new AcademyException("Categoria non trovata"));
 		//TipoAlimentazioneDTO tipoDeleted = TipoAlimentazioneMap.buildTipoAlimentazioneDTO(tipoToDelete);
 		catRepo.delete(categoriaToDelete);	
 		//return tipoDeleted;
