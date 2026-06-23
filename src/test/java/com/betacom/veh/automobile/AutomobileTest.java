@@ -22,6 +22,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.betacom.veh.dto.input.AutomobileRequest;
 import com.betacom.veh.dto.output.ResponseDTO;
 import com.betacom.veh.models.Automobile;
+import com.betacom.veh.models.TipoAlimentazione;
+import com.betacom.veh.models.TipoAlimentazioneId;
+import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.ObjectMapper;
@@ -36,6 +39,11 @@ public class AutomobileTest {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private ITipoAlimentazioneRepository typeRepo;
+	
+	
 	
 	private Automobile insertedCar;
 	
@@ -65,6 +73,10 @@ public class AutomobileTest {
 	@Test
 	@Order(1)
 	public void createAutomobileTest() throws Exception{
+		TipoAlimentazione tipo = new TipoAlimentazione();								//creando tipo alimentazione
+		tipo.setTipoAlimentazioneId(TipoAlimentazioneId.builder()						//creando tipo alimentazione
+				.tipoAlimentazione("BENZINA").tipoVeicolo("AUTOMOBILE").build());		//creando tipo alimentazione
+		typeRepo.save(tipo);															//creando tipo alimentazione
 		AutomobileRequest request = createValidAutomobileCreateRequest();		
 		try {
 			MvcResult result = mockMvc.perform(post("/rest/automobile/create")
