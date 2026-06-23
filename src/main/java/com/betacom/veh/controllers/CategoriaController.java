@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/rest/moto")
+@RequestMapping("/rest/categoria")
 public class CategoriaController {
 	private final ICategoriaService catS;
 	
