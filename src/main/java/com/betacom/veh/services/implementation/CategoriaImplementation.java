@@ -23,7 +23,7 @@ public class CategoriaImplementation implements ICategoriaService{
 	
 	@Override
 	public void create(CategoriaRequest categoriaRequest) throws Exception {
-		if(!categoriaRequest.getTipoVeicolo().toUpperCase().matches("\\d(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\d"))
+		if(!categoriaRequest.getTipoVeicolo().toUpperCase().matches("\\b(AUTOMOBILE|BICICLETTA|MOTOVEICOLO)\\b"))
 			throw new AcademyException("tipo di veicolo non riconosciuto.");
 		Categoria nuovaCategoria = new Categoria();
 		nuovaCategoria.setCategoriaId(CategoriaId.builder()
