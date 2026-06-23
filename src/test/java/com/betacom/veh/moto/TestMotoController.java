@@ -27,15 +27,11 @@ import com.betacom.veh.dto.input.MotoRequest;
 import com.betacom.veh.dto.mapping.MotoMap;
 import com.betacom.veh.dto.output.MotoDTO;
 import com.betacom.veh.dto.output.ResponseDTO;
-import com.betacom.veh.models.Categoria;
-import com.betacom.veh.models.CategoriaId;
 import com.betacom.veh.models.Moto;
 import com.betacom.veh.models.TipoAlimentazione;
 import com.betacom.veh.models.TipoAlimentazioneId;
-import com.betacom.veh.repositories.ICategoriaRepository;
 import com.betacom.veh.repositories.IMotoRepository;
 import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
-import com.betacom.veh.utils.GeneraTargaMoto;
 
 import jakarta.transaction.Transactional;
 
@@ -60,7 +56,6 @@ public class TestMotoController {
 	@Autowired
 	private IMotoRepository motoRepo;
 	
-	private GeneraTargaMoto targa = new GeneraTargaMoto();
 	
 	@BeforeAll
     public static void setup(
@@ -367,7 +362,48 @@ public class TestMotoController {
 	}
 	
 	@Test
-	@Order(13)
+	@Order (13)
+	public void updateIdErrorMotoTest() throws Exception {
+		log.debug("updateIdErrorMotoTest");
+		MotoRequest req = MotoRequest.builder()
+		.cc(1000)
+		.build();
+			
+		MvcResult result = mockMvc.perform(put("/rest/moto/update")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(req)))
+				.andExpect(status().isBadRequest())		 
+				.andReturn();
+		
+		String json = result.getResponse().getContentAsString();
+		ResponseDTO dto = objectMapper.readValue(json, ResponseDTO.class);
+		
+		log.debug("rc update :{}", dto.getMsg());
+	}
+	
+	@Test
+	@Order (14)
+	public void updateTargaErrorMotoTest() throws Exception {
+		log.debug("updateTargaErrorMotoTest");
+		MotoRequest req = MotoRequest.builder()
+		.targa(null)
+		.cc(1000)
+		.build();
+			
+		MvcResult result = mockMvc.perform(put("/rest/moto/update")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(req)))
+				.andExpect(status().isBadRequest())		 
+				.andReturn();
+		
+		String json = result.getResponse().getContentAsString();
+		ResponseDTO dto = objectMapper.readValue(json, ResponseDTO.class);
+		
+		log.debug("rc update :{}", dto.getMsg());
+	}
+	
+	@Test
+	@Order(15)
 	public void deleteMotoTest() throws Exception{
 		log.debug("deleteMoto");
 		
