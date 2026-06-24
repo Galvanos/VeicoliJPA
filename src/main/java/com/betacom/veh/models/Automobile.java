@@ -20,4 +20,5 @@ public class Automobile extends Veicolo {
 
     @Column(name = "cilindrata")
     private Integer cc;
+    
 }

@@ -19,7 +19,9 @@ import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
 import com.betacom.veh.services.interfaces.IAutomobileService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AutomobileImplementation implements IAutomobileService{
@@ -31,10 +33,10 @@ public class AutomobileImplementation implements IAutomobileService{
 
 	@Override
 	public AutomobileDTO create(AutomobileRequest req) throws Exception {
-		validateRequestValues(req);
-		
 		Automobile car = new Automobile();
-
+		car.setTarga("");
+		validateRequestValues(req, car);
+			
 		car.setId(null);		
 		car.setTarga(req.getTarga().toUpperCase());
 		car.setNumeroRuote(req.getNumeroRuote());
@@ -55,7 +57,8 @@ public class AutomobileImplementation implements IAutomobileService{
 	@Override
 	public AutomobileDTO update(AutomobileRequest req) throws Exception {
 		Automobile car = carRepo.findById(req.getId()).orElseThrow(() -> new Exception("Automobile non trovata"));
-		validateRequestValues(req);
+		log.debug("TARGA DELL' AUTO TROVATA:" + car.getTarga());
+		validateRequestValues(req, car);
 		if(req.getTarga() != null && !req.getTarga().equalsIgnoreCase(car.getTarga())) {
 			car.setTarga(req.getTarga());
 		}
@@ -93,11 +96,14 @@ public class AutomobileImplementation implements IAutomobileService{
 		return AutomobileMap.buildAutomobileDTOList(lA);
 	}
 
-	private void validateRequestValues(AutomobileRequest req) throws Exception{
+	private void validateRequestValues(AutomobileRequest req, Automobile car) throws Exception{
 		
 		Optional.ofNullable(req.getTarga()).ifPresent(targa -> {
-			if(carRepo.existsByTarga(targa) || !targa.matches(PATTERN_TARGA_AUTO))
-				throw new AcademyException("Targa non valida o giá presente nel db.");
+			if(!targa.matches(PATTERN_TARGA_AUTO))
+				throw new AcademyException("Targa non valida.");
+			else if(carRepo.existsByTarga(targa) && !targa.equals(car.getTarga())) {
+				throw new AcademyException("Targa già presente nel database.");
+			}
 		});		
 		Optional.ofNullable(req.getNumeroRuote()).ifPresent(numeroRuote -> {
 			if(numeroRuote < 1 || numeroRuote > 99)
