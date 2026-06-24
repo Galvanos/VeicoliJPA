@@ -282,12 +282,12 @@ public class VeicoloImplementation implements IVeicoloService{
 	private void addMinMaxIntParamToSpecificationList(List<Specification<Veicolo>> filterSpec,Integer min,Integer max,String fieldName) {
 		Specification<Veicolo> minSpec = Optional.ofNullable(min).map(t -> createMinSpecification(t, fieldName)).orElse(null);
 		Specification<Veicolo> maxSpec = Optional.ofNullable(max).map(t -> createMaxSpecification(t, fieldName)).orElse(null);
-		if(minSpec != null) {
-			filterSpec.add(minSpec);
-		}
-		if(maxSpec != null) {
-			filterSpec.add(maxSpec);
-		}
+		List<Specification<Veicolo>> minMaxSpecsList = new LinkedList<>();
+		minMaxSpecsList.add(minSpec);
+		minMaxSpecsList.add(maxSpec);
+		minMaxSpecsList.removeIf(Objects::isNull);
+		Specification<Veicolo> minMaxSpec = Specification.allOf(minMaxSpecsList);
+		filterSpec.add(minMaxSpec);
 	}
 
 	private Specification<Veicolo> createMinSpecification(Integer min, String fieldName) {
@@ -305,12 +305,12 @@ public class VeicoloImplementation implements IVeicoloService{
 				.orElse(null);
 		Specification<Veicolo> maxSpec = Optional.ofNullable(max).map(t -> createMaxSpecificationMoto(t, fieldName))
 				.orElse(null);
-		if (minSpec != null) {
-			filterSpec.add(minSpec);
-		}
-		if (maxSpec != null) {
-			filterSpec.add(maxSpec);
-		}
+		List<Specification<Veicolo>> minMaxSpecsList = new LinkedList<>();
+		minMaxSpecsList.add(minSpec);
+		minMaxSpecsList.add(maxSpec);
+		minMaxSpecsList.removeIf(Objects::isNull);
+		Specification<Veicolo> minMaxSpec = Specification.allOf(minMaxSpecsList);
+		filterSpec.add(minMaxSpec);
 	}
 
 	private Specification<Veicolo> createMinSpecificationMoto(Integer min, String fieldName) {
@@ -333,12 +333,14 @@ public class VeicoloImplementation implements IVeicoloService{
 				.map(t -> createMinSpecificationAutomobile(t, fieldName)).orElse(null);
 		Specification<Veicolo> maxSpec = Optional.ofNullable(max)
 				.map(t -> createMaxSpecificationAutomobile(t, fieldName)).orElse(null);
-		if (minSpec != null) {
-			filterSpec.add(minSpec);
-		}
-		if (maxSpec != null) {
-			filterSpec.add(maxSpec);
-		}
+		List<Specification<Veicolo>> minMaxSpecsList = new LinkedList<>();
+		minMaxSpecsList.add(minSpec);
+		minMaxSpecsList.add(maxSpec);
+		minMaxSpecsList.removeIf(Objects::isNull);
+		Specification<Veicolo> minMaxSpec = Specification.allOf(minMaxSpecsList);
+		filterSpec.add(minMaxSpec);
+		
+		
 	}
 
 	private Specification<Veicolo> createMinSpecificationAutomobile(Integer min, String fieldName) {
@@ -361,12 +363,12 @@ public class VeicoloImplementation implements IVeicoloService{
 				.orElse(null);
 		Specification<Veicolo> maxSpec = Optional.ofNullable(max).map(t -> createMaxSpecificationBici(t, fieldName))
 				.orElse(null);
-		if (minSpec != null) {
-			filterSpec.add(minSpec);
-		}
-		if (maxSpec != null) {
-			filterSpec.add(maxSpec);
-		}
+		List<Specification<Veicolo>> minMaxSpecsList = new LinkedList<>();
+		minMaxSpecsList.add(minSpec);
+		minMaxSpecsList.add(maxSpec);
+		minMaxSpecsList.removeIf(Objects::isNull);
+		Specification<Veicolo> minMaxSpec = Specification.allOf(minMaxSpecsList);
+		filterSpec.add(minMaxSpec);
 	}
 
 	private Specification<Veicolo> createMinSpecificationBici(Integer min, String fieldName) {
