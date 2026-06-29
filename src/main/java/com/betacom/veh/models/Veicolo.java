@@ -24,7 +24,7 @@ public class Veicolo {
     private String tipoAlimentazione;
 
     @Column(name = "categoria", nullable = false, length = 50)
-    private String categoria;
+    private String categoria;   
 
     @Column(name = "colore", nullable = false, length = 30)
     private String colore;
