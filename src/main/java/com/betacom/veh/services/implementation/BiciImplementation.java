@@ -10,8 +10,10 @@ import com.betacom.veh.dto.mapping.BiciMap;
 import com.betacom.veh.dto.output.BiciDTO;
 import com.betacom.veh.exceptions.AcademyException;
 import com.betacom.veh.models.Bici;
+import com.betacom.veh.models.CategoriaId;
 import com.betacom.veh.models.TipoAlimentazioneId;
 import com.betacom.veh.repositories.IBiciRepository;
+import com.betacom.veh.repositories.ICategoriaRepository;
 import com.betacom.veh.repositories.IFrenoRepository;
 import com.betacom.veh.repositories.ISospensioneRepository;
 import com.betacom.veh.repositories.ITipoAlimentazioneRepository;
@@ -26,6 +28,7 @@ public class BiciImplementation implements IBiciService{
 
 	private final IBiciRepository biciR;
 	private final IFrenoRepository frenR;
+	private final ICategoriaRepository catRepo;
 	private final ISospensioneRepository sospR;
 	private final ITipoAlimentazioneRepository typeRepo;
 	private final String tipoVeicolo = "BICICLETTA";
@@ -45,6 +48,16 @@ public class BiciImplementation implements IBiciService{
 			throw new AcademyException("Tipo di sospensione non trovato");
 		bici.setTipoSospensione(req.getTipoSospensione().trim().toUpperCase());
 		bici.setPieghevole(req.getPieghevole());
+		if (req.getNumeroRuote() <= 2 || req.getNumeroRuote() >= 4)
+			throw new AcademyException("Numero di ruote non valido: " + req.getNumeroRuote());
+		bici.setNumeroRuote(req.getNumeroRuote());
+		if (!typeRepo.existsByTipoAlimentazioneId(TipoAlimentazioneId.builder().tipoVeicolo("BICICLETTA").tipoAlimentazione(req.getTipoAlimentazione()).build())) {
+			throw new AcademyException("Tipo di Alimentazione non valido: " + req.getTipoAlimentazione());
+		}
+		bici.setTipoAlimentazione(Alimentazione(req.getTipoAlimentazione()));
+		if (!catRepo.existsByCategoriaId(CategoriaId.builder().tipoVeicolo("BICICLETTA").categoria(req.getCategoria()).build())) {
+			throw new AcademyException("Tipo di Categoria non valido: " + req.getTipoAlimentazione());
+		}
 		bici.setTipoAlimentazione(Alimentazione(req.getTipoAlimentazione()));
 		
 		BiciDTO biciDto = BiciMap.buildBiciDTO(biciR.save(bici));

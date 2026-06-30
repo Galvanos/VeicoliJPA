@@ -13,6 +13,15 @@ public class BiciMap {
 	public static BiciDTO buildBiciDTO(Bici bici) {
 		
 		return BiciDTO.builder()
+				.id(null)
+				.tipoVeicolo("BICICLETTA")
+				.numeroRuote(bici.getNumeroRuote())
+				.tipoAlimentazione(bici.getTipoAlimentazione())
+				.categoria(bici.getCategoria())
+				.colore(bici.getColore())
+				.marca(bici.getMarca())
+				.annoProduzione(bici.getAnnoProduzione())
+				.modello(bici.getModello())
 				.numeroRapporti(bici.getNumeroRapporti())
 				.tipoFreno(bici.getTipoFreno())
 				.tipoSospensione(bici.getTipoSospensione())

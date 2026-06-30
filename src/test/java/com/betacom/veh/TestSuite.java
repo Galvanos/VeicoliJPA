@@ -8,7 +8,8 @@ import com.betacom.veh.categorie.TestCategorieController;
 
 @Suite
 @SelectClasses({
-	TestCategorieController.class
+	TestCategorieController.class,
+	TestBici.class
 })
 public class TestSuite {
 
